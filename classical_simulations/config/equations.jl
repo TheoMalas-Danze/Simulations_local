@@ -201,7 +201,7 @@ function equation_Taylor!(ddu, du, u, p::SimulationParams_Taylor{SystemATS_prepa
 end
 
 #ATS + Mean_Field + ladder_operator
-function default_equation!(du,u,p::SimulationParams_Taylor{SystemATS_ladder_prepared, D, MeanField}, t) where D<:DriveTwoModes_prepared
+function equation_Taylor!(du,u,p::SimulationParams_Taylor{SystemATS_ladder_prepared, D, MeanField}, t) where D<:DriveTwoModes_prepared
     ω_a, ω_b, E_J, Z_a, Z_b, ϕ_quantum = p.system_prepared.system.ω_a, p.system_prepared.system.ω_b, p.system_prepared.system.E_J, p.system_prepared.Z_a, p.system_prepared.Z_b, p.system_prepared.ϕ_quantum
     ϵ_d, ω_d, buffer_phase, ϵ_0, ω_p, pump_phase =  p.drive_prepared.drive.ϵ_d, p.drive_prepared.drive.ω_d, p.drive_prepared.drive.buffer_phase, p.drive_prepared.drive.ϵ_0, p.drive_prepared.drive.ω_p, p.drive_prepared.drive.pump_phase
 
@@ -284,7 +284,7 @@ function default_equation!(ddu, du, u, p::SimulationParams{SystemATS_Michiel_pre
     
     coupling = cos(sqrt(2)*λ_a*x_a + sqrt(2)*λ_b*x_b) - 1
 
-    ddu[1] = - (x_a - β_a/(sqrt(2)*λ_a)*coupling)/4  - 2 * p.environment_prepared.κ_a * du[1]
+    ddu[1] = - (x_a - β_a/(sqrt(2)*λ_a)*coupling)/4  -  p.environment_prepared.κ_a * du[1]
     ddu[2] = - (x_b + p.drive_prepared.drive_func(ϵ_d, ν_d, t, phase) - β_b/(sqrt(2)*λ_b)*coupling)  -  2 * p.environment_prepared.κ_b * du[2]
     return(nothing)
 end

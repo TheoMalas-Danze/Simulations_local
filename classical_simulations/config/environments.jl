@@ -78,7 +78,7 @@ function get_dt(system::Union{SystemATS, SystemATS_ladder}, environment::OneChai
 end
 
 function get_dt(system::Union{SystemATS_Michiel},  environment::E) where E<:AbstractMeanField
-    dt = 2pi/(50*(1/2)) # Time step for the simulation
+    dt = 1/(34*sqrt(2)*(1/2)) # Time step for the simulation
     return dt
 end
 
