@@ -60,6 +60,8 @@ linestyles = {
 # Set the new default colors
 plt.rcParams['axes.prop_cycle'] = plt.cycler(color=Perso_palette_float)
 
+#plt.rcParams['image.cmap'] = Perso_colormap
+
 plt.rcParams.update({
     'text.usetex': False,
     #####Size######
