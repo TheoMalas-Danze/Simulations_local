@@ -2,7 +2,7 @@
 
 julia_version = "1.11.7"
 manifest_format = "2.0"
-project_hash = "2eab7b71dccb45c4707afc0a9e060e3756a2a3e1"
+project_hash = "c840b175f99e3e67d0b72c7d154644c985aa5138"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "27cecae79e5cc9935255f90c53bb831cc3c870d7"
@@ -14,6 +14,12 @@ weakdeps = ["ChainRulesCore", "ConstructionBase", "EnzymeCore"]
     ADTypesChainRulesCoreExt = "ChainRulesCore"
     ADTypesConstructionBaseExt = "ConstructionBase"
     ADTypesEnzymeCoreExt = "EnzymeCore"
+
+[[deps.AStarSearch]]
+deps = ["DataStructures"]
+git-tree-sha1 = "3bf7e54baeab28992daf4f5c7b2c7dbb88df28e9"
+uuid = "e6cbe913-2b79-4cc5-848a-e3bbf8537828"
+version = "0.7.0"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
