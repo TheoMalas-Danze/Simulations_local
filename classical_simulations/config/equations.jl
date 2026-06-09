@@ -308,3 +308,35 @@ function equation_1ODE!(du, u, p::SimulationParams{SystemATS_Michiel_prepared, D
     du[4] = - (x_b + p.drive_prepared.drive_func(ϵ_d, ν_d, t, phase) - β_b/(sqrt(2)*λ_b)*coupling)  -  2 * p.environment_prepared.κ_b * p_b
     return(nothing)
 end
+
+
+#ATS + Mean_Field
+function equation_parity_cos_sin!(ddu, du, u, p::SimulationParams{SystemATS_prepared, D, MeanField}, t) where D<:DriveTwoModes_prepared
+    ω_a, ω_b, E_J, Z_a, Z_b, ϕ_quantum = p.system_prepared.system.ω_a, p.system_prepared.system.ω_b, p.system_prepared.system.E_J, p.system_prepared.Z_a, p.system_prepared.Z_b, p.system_prepared.ϕ_quantum
+    ϵ_d, ω_d, buffer_phase, ϵ_0, ω_p, pump_phase =  p.drive_prepared.drive.ϵ_d, p.drive_prepared.drive.ω_d, p.drive_prepared.drive.buffer_phase, p.drive_prepared.drive.ϵ_0, p.drive_prepared.drive.ω_p, p.drive_prepared.drive.pump_phase
+    ϕ_a = u[1]
+    ϕ_b = u[2]
+    coupling_a = sin(ϕ_a * sqrt(Z_a)/ϕ_quantum) * sin(ϕ_b * sqrt(Z_b)/ϕ_quantum) / ϕ_quantum
+    coupling_b = (cos(ϕ_a * sqrt(Z_a)/ϕ_quantum) * cos(ϕ_b * sqrt(Z_b)/ϕ_quantum) -1) / ϕ_quantum
+    sin_pump = 2*E_J*p.drive_prepared.drive_pump(ϵ_0, ω_p, t, pump_phase)
+    ddu[1] = -ω_a*(ω_a*ϕ_a + sqrt(Z_a) * sin_pump*coupling_a) - 2 * p.environment_prepared.κ_a * du[1]
+    ddu[2] = -ω_b*(ω_b*ϕ_b + p.drive_prepared.drive_buffer(ϵ_d, ω_d, t, buffer_phase)*sqrt(2) - sqrt(Z_b) * sin_pump*coupling_b) - 2 * p.environment_prepared.κ_b * du[2]
+    return(nothing)
+end
+
+#ATS + Mean_Field + ladder_operator
+function equation_parity_cos_sin!(du,u,p::SimulationParams{SystemATS_ladder_prepared, D, MeanField}, t) where D<:DriveTwoModes_prepared
+    ω_a, ω_b, E_J, Z_a, Z_b, ϕ_quantum = p.system_prepared.system.ω_a, p.system_prepared.system.ω_b, p.system_prepared.system.E_J, p.system_prepared.Z_a, p.system_prepared.Z_b, p.system_prepared.ϕ_quantum
+    ϵ_d, ω_d, buffer_phase, ϵ_0, ω_p, pump_phase =  p.drive_prepared.drive.ϵ_d, p.drive_prepared.drive.ω_d, p.drive_prepared.drive.buffer_phase, p.drive_prepared.drive.ϵ_0, p.drive_prepared.drive.ω_p, p.drive_prepared.drive.pump_phase
+
+    a = u[1]
+    b = u[2]
+
+    coupling_a = sin((a+conj(a))/sqrt(2) * sqrt(Z_a)/ϕ_quantum) * sin((b+conj(b))/sqrt(2) * sqrt(Z_b)/ϕ_quantum) / ϕ_quantum
+    coupling_b = (cos((a+conj(a))/sqrt(2) * sqrt(Z_a)/ϕ_quantum) * cos((b+conj(b))/sqrt(2) * sqrt(Z_b)/ϕ_quantum) -1) / ϕ_quantum / sqrt(2)
+    sin_pump = 2*E_J*p.drive_prepared.drive_pump(ϵ_0, ω_p, t, pump_phase)
+        
+    du[1] = -1im*(ω_a*a + sqrt(Z_a)*sin_pump*coupling_a) - p.environment_prepared.κ_a * a
+    du[2] = -1im*(ω_b*b + p.drive_prepared.drive_buffer(ϵ_d, ω_d, t, buffer_phase) - sqrt(Z_b)*sin_pump*coupling_b) - p.environment_prepared.κ_b * b
+    return nothing
+end
