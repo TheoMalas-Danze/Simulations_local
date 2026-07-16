@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 from scipy.linalg import block_diag
 from scipy.optimize import root
 import matplotlib.pyplot as plt
-
+from scipy.optimize import linear_sum_assignment
+from scipy.linalg import eig as scipy_eig
 
 from dataclasses import dataclass
 
@@ -200,7 +201,7 @@ class HillMethod:
         return Gamma_pinv @ f_tilde     # (n*(2N_H+1),)
 
     def residual(self, z):
-        return self.L @ z - self.b_nl(z) - self.b_ext
+        return self.L @ z + self.b_nl(z) - self.b_ext
 
     def dfnl_dX_blocks(self, X):
         """
@@ -256,7 +257,7 @@ class HillMethod:
         return self.Gamma_pinv @ (Jbig @ self.Gamma)
 
     def jacobian(self, z):
-        return self.L - self.db_dz(z)
+        return self.L + self.db_dz(z)
     
     def newton_solve(self, z0, tol=1e-10, maxit=50, verbose=True):
         z = z0.copy()
@@ -506,11 +507,51 @@ class HillMethod:
         ])
 
         # Prefer solve over explicit inverse
-        B = np.linalg.solve(B_2, B_1)
+        eigvals, eigvecs = scipy_eig(B_1, B_2)
 
-        eigvals = np.linalg.eigvals(B)
-
+        # sort by absolute value of imaginary part
         idx = np.argsort(np.abs(np.imag(eigvals)))
-        eigvals_selected = eigvals[idx[:2 * self.n]]
 
-        return eigvals_selected
+        # keep 2n smallest
+        idx_selected      = idx[:4*self.n]
+        eigvals_selected  = eigvals[idx_selected]
+        eigvecs_selected  = eigvecs[:, idx_selected]
+
+        return eigvals_selected, eigvecs_selected
+
+    def match_eigs(self, prev_eigvals, prev_eigvecs, new_eigvals, new_eigvecs,
+                    alpha=1.0, beta=5.0):
+        """
+        Match new eigenpairs to previous ones using both eigenvalue proximity
+        and eigenvector overlap (subspace continuity). Returns a permutation
+        array 'perm' such that new_eigvals[perm] aligns with prev_eigvals.
+        """
+        n_eigvals = len(prev_eigvals)
+        cost = np.zeros((n_eigvals, n_eigvals))
+
+        # normalize eigenvectors (columns) to unit norm, kill phase ambiguity
+        # by fixing the phase of the largest-magnitude component to be real positive
+        def normalize(vecs):
+            vecs = vecs / np.linalg.norm(vecs, axis=0, keepdims=True)
+            for j in range(vecs.shape[1]):
+                k = np.argmax(np.abs(vecs[:, j]))
+                phase = vecs[k, j] / np.abs(vecs[k, j])
+                vecs[:, j] /= phase
+            return vecs
+
+        prev_v = normalize(prev_eigvecs.copy())
+        new_v  = normalize(new_eigvecs.copy())
+
+        # scale for eigenvalue distance so it's comparable to overlap term
+        eig_scale = np.max(np.abs(prev_eigvals)) + 1e-12
+
+        for i in range(n_eigvals):
+            for j in range(n_eigvals):
+                dval     = np.abs(prev_eigvals[i] - new_eigvals[j]) / eig_scale
+                overlap  = np.abs(np.vdot(prev_v[:, i], new_v[:, j]))  # in [0,1]
+                dvec     = 1.0 - overlap
+                cost[i, j] = alpha * dval + beta * dvec
+
+        _, perm = linear_sum_assignment(cost)
+        # row_ind is just 0..n-1 in order since cost is square; perm gives new->prev mapping
+        return perm
