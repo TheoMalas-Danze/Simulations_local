@@ -1,0 +1,88 @@
+1. Big errors
+1. g₂ has two definitions that differ by a factor of about 2.
+* Appendix B, L1019, defines g₂ = E_J sin ε_p φ_a²φ_b. This matches the simulated model (static flux, ω_p = 0).
+* Every figure uses g₂ = J₁(ε_p) E_J φ_a²φ_b instead. J₁(ε_p)/sin ε_p is between 0.50 and 0.53 over your grid.
+* I checked: the period-doubling at ε_p = 0.627 is 41.0 MHz with J₁, as quoted in App. E, but 80.6 MHz with the paper's own definition.
+* So every g₂ axis is about half the real coupling, and ε_d/2g₂ is about twice the real cat size.
+* The hidden \iffalse block (L1349-1353) already notes this factor, but it does not appear in the PDF.
+* The main text also never links g, g₂, ε_p and E_J, yet ε_p appears as an axis in Fig. 16.
+2. κ_b has two definitions that differ by a factor of 2.
+* Eqs. (5)–(6) use the master-equation (GKSL) convention, κ_b 𝒟[b], which gives ḃ = −(κ_b/2) b.
+* App. B (L939) uses ḃ = −κ_b b. The Julia term −2κ_b ẋ_b matches App. B, not Eq. (6).
+* So "κ_b/2π = 48 MHz" in the classical figures is a photon-loss rate of 96 MHz in the convention of Eq. (5).
+* You need to check which convention the quantum OTOC and IPR runs used. If they differ, the conclusion that the quantum threshold is lower is partly an artefact.
+3. Fig. 4 has the wrong periods and the wrong quantity.
+* The satellites have period 2π/ω_a = 4π/ω_b (App. B, L1052). The captions should read T = 4π/ω_b and 8π/ω_b, not 2π/ω_b and 4π/ω_b.
+* Fig. 4e plots the real part of the multipliers, but you claim a Neimark–Sacker bifurcation (a complex pair leaving the unit circle). That requires |μ|, and |μ| = 1 is crossed before Re μ = 1.
+* The bullet list at L380-384 leaves out the +1 crossing (how satellites are born) and the complex-pair crossing (the one you actually observe).
+* Footnote 10 is wrong: one complex pair plus two real multipliers is also possible.
+4. The chaos is transient, and the Lyapunov maps depend on the integration window.
+* App. I (Fig. 18) shows the chaotic fraction going to 0 by κ_b t ≈ 200.
+* The Lyapunov window is 45/κ_b, about the same as the transient lifetime you quote (42/κ_b).
+* So the red region in Fig. 5d means "still chaotic at the end of the window". Your headline threshold depends on the window length.
+* The method itself (T, T_tr, d₀) is inside \iffalse (L1310-1381), so the PDF has no Lyapunov method at all.
+5. The headline threshold is about the vacuum start, not the cat.
+* Starting at the origin "because of the fringes" (L443) does not hold up: a classical trajectory does not see quantum interference fringes.
+* A better reason: the origin is the saddle between the two cat basins. It is where the bit-flip path goes and where a cat is prepared from vacuum.
+* Fig. 14 shows the cat attractor stays regular almost everywhere. Your hidden text says it outright: "chaos is a property of the initial condition, not an instability of the cat."
+* So the abstract's "upper threshold on g₂ and cat size" is overstated. This needs to be in the main text, and the abstract rephrased.
+6. The main text does not show the link between the satellite instability and chaos.
+* In Fig. 5d, the Hill line sits 10–20 MHz to the left of the chaos boundary. A reader sees disagreement.
+* The agreement only appears in Fig. 15 (satellite start), which is in Appendix E. Move it to the main text.
+7. The physics in the model section is wrong in places.
+* L315: V ∝ sin(φ/Φ₀) is wrong. The Josephson relations are I = I_c sin φ and V = φ₀ φ̇.
+* L329: no choice of the offset φ_d turns sin(x + φ_d) into sin x − x. You need the real mechanism for removing the linear term.
+* App. H assumes a pumped flux ε(t) = ε_p sin(ω_p t). The main model is autoparametric with a static flux, so the two are not consistent.
+8. The quantum truncation is probably too small.
+* IPR uses n_a = 29. But the satellites sit at |a| ≈ 6, about 36 photons (Fig. 12), and the chaotic region reaches |a| ≈ 7.5 (Fig. 5c).
+* So N_eff ≈ 9.7 may be limited by the truncation. The OTOC truncation is not given at all.
+* The IPR time T = 0.2/κ_b is 0.66 ns, about 2.7 memory periods. That is shorter than 1/g₂, so the IPR drop may just be the bare cat relaxing to its dressed state, not chaos.
+9. Fig. 11 contradicts Appendix H.
+* The figure labels one ATS "Buffer" and the other "Memory", and couples the port to both.
+* App. H says the buffer and memory are the symmetric and antisymmetric modes of the two ATS, and that the memory is dark to the port.
+* Also, without L_c, ω_b = 2ω_a needs C_c = 1.5 C̄. You should say whether that is realistic.
+10. The mitigation comparisons are made at fixed g₂.
+* What matters for the qubit is κ₂ = 4g₂²/κ_b at a fixed α².
+* Larger κ_b: at your working point the threshold in Fig. 7 is flat. So raising κ_b lowers κ₂ without moving the threshold, which makes things worse at first.
+* Multi-buffer: with N identical buffers, the symmetric combination couples with g_eff/√N in the rotating-wave approximation. The apparent gain may come only from the choice of x-axis.
+11. "Infinitely many limit cycles" (L360) is not supported. Your own equation J₂(2|a₀|) = ε′/2β′ has finitely many roots, because J₂ decays.
+2. Smaller errors
+* Broken and missing pieces.
+    * The PDF shows "??" for app:hill (that appendix does not exist) and for sec:transient_entropy (the label is sec:transient_chaos).
+    * App. C is only a figure.
+    * App. E starts mid-argument because its introduction is inside \iffalse.
+* App. I.
+    * H_r is used but never defined.
+    * The caption says the solid lines are fits, but the text says they are the data.
+    * A torus created by the Neimark–Sacker bifurcation fills many cells, so the entropy test counts it as chaos. A sign-only Lyapunov map has the same blind spot, since a torus gives λ ≈ 0.
+* Phase convention. App. B puts the cats at θ = ±π/2 and the satellites on the real axis. Figs. 3, 12 and 13 show the opposite.
+* App. A. The "isotropic Gaussian with σ² = 1/2" is narrower than the vacuum for a Q-function, so it is not a physical state. Describe it instead as dropping the e^{−K} correction, which is O(φ²).
+* Fig. 10b. The multiplier is heading towards −1 at the edge of the plotted range. "Never reaches −1" only holds inside that window, and the sentence has a double negative.
+* Figure conventions.
+    * The axes differ between figures: g₂ vs ε_p, ε_d/2g₂ vs ε_d/g₂, and different ranges (Fig. 14 has an empty band at the top).
+    * λ has no units, and the meaning of a negative OTOC exponent is never explained.
+    * Fig. 4 does not give ε_d/2g₂ (it is 5.06).
+* Text and references.
+    * There is no table of parameters (ω_a, φ_a, φ_b, E_J, κ_b, ranges).
+    * "integrable" should be "regular" for a dissipative system.
+    * "loose" should be "lose".
+    * Mirrahimi 2014 is not "late 2010s".
+    * Lescanne and Pg are cited as arXiv preprints although both are published.
+    * Nine \TMD{} notes are still open.
+3. Open questions
+For the main text:
+1. Does the cat itself ever lose stability? Run Hill's method on the cat orbit, not only on the satellites.
+2. What does chaos do to the qubit? Show bit-flip time or leakage against g₂. You already have Floquet–Arnoldi bit-flip data in analysis/slowest_decay_rate/. Without this, "chaos is bad" is never tied to a qubit metric.
+3. Are the satellites a leakage risk? They are stable attractors well below the chaos threshold, which makes them leakage states. Where are they born, and how large are their basins?
+4. Where are real devices on the map? Mark them, and state g₂/κ_b. At your threshold it is about 0.85–1.7, well outside the regime where the buffer can be adiabatically eliminated.
+5. Is there a real chaotic attractor, or only transient chaos? Does the transient lifetime diverge at some g₂ (a crisis)? Is the route period-doubling, then Neimark–Sacker, then torus breakdown? Poincaré sections of the torus would show it.
+6. Why is the quantum threshold lower? OTOCs also grow exponentially near an unstable saddle without any chaos, and the origin is such a saddle. Compare with a classical OTOC from truncated Wigner with the same initial state.
+7. Are the mitigations still better at fixed κ₂ and α²?
+For the appendices:
+* A Hill-method appendix. Cover the convergence in the number of harmonics N_H, how the genuine eigenvalues are selected, the Liouville check, and a cross-check against a directly integrated monodromy matrix.
+* The Lyapunov method. Un-hide it, add convergence in T and d₀, and define the yellow line.
+* Quantum simulation details. Give the truncations and their convergence, how the sine of an operator is computed, the OTOC fit window, the initial state (bare or dressed cat), and the κ_b convention.
+* Robustness checks. Test memory loss κ_a ≠ 0, the drive frequency corrected for the Stark shift (utils/solve_resonance.py exists), the drive phase, and E_J asymmetry for the parity-protected design.
+* Fig. 7 slope (\TMD{Explanation?}). This is my hypothesis, not tested: the satellite existence condition 2κ′_b|y| ≤ ε′_d (Eqs. B21–B23) gives a threshold linear in κ_b. Overlay it on Fig. 7 to check.
+* Symmetry. I checked that the rotating-frame equations (B3) are invariant under a → −a combined with τ → τ + π. So the full model already has a parity tied to a half-period time shift. Say what the parity-protected design adds (an instantaneous parity). Then check whether period doubling is forbidden by symmetry there or only pushed to larger g₂.
+I'd fix items 1 and 2 first, because every figure axis depends on them. If it helps for sharing with Joachim and Alexandru, I can turn this into a review page.

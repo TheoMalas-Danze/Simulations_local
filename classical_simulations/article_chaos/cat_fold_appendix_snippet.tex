@@ -1,0 +1,45 @@
+% Snippet for App. "Analytical derivation of the harmonic balance", to go after \cref{app:satellites}
+% (it reuses eq:app_sat_poly, eq:app_z, eq:app_sat_bessel). Numbers: Hill_method_cat_fold.ipynb (19/10/2026).
+
+\subsection{Fold of the cat branch}
+\label{app:cat_fold}
+
+The single-harmonic cat of \cref{app:cat_derivation} cannot end. \Cref{eq:app_cat_bessel} has a solution as long as $\varepsilon_d'/(2\beta_b') = \varphi_a^2|\alpha|^2/2 \le \max_z J_2(z)\simeq0.49$, and this ratio does not depend on $\varepsilon_p$ and stays below $0.05$ for $|\alpha|^2\le6.75$.
+The numerical cat orbit nevertheless disappears at a finite $g_2$ through a fold (saddle-node of limit cycles): one Floquet multiplier reaches $+1$ and the cat merges with a saddle orbit of larger amplitude.
+This fold is contained in the Ansatz \cref{eq:app_sat_ansatz} taken on the cat family, $\sigma=-1$.
+
+At lowest order in the junction phase and for $\kappa_b'\to0$, the first and last lines of \cref{eq:app_sat_poly} do not depend on $\sigma$. They still give $C=-\bar y(1+u)$ with $u(\bar y)$ as for the satellites. The other two lines become
+\begin{equation}
+\begin{split}
+    x^2(1+2u) &= 2(1+u)\bar y^2 + A,\qquad A \equiv \frac{\varepsilon_d'}{\beta_b'} = \varphi_a^2|\alpha|^2,\\
+    \bar y\,(1+u) &= 2\beta_\Sigma\Bigl[\Bigl(1+\frac{(1+u)^2}{2}\Bigr)\bar y^2 + \bigl(1+u^2\bigr)\,x^2\Bigr],
+\end{split}
+\label{eq:app_cat_fold_system}
+\end{equation}
+with $|\alpha|^2=\varepsilon_d/2g_2$. They differ from the satellite case only by the sign of $A$.
+At leading order, $u\to0$, they reduce to $x^2=A+2\bar y^2$ and
+\begin{equation}
+    7\beta_\Sigma\bar y^2 - \bar y + 2\beta_\Sigma A = 0,
+    \qquad
+    \bar y_\mp = \frac{1\mp\sqrt{1-56\,\beta_\Sigma^2A}}{14\,\beta_\Sigma}.
+\end{equation}
+The root $\bar y_-$ tends to the cat of \cref{app:cat_derivation} when $\beta_\Sigma\to0$, and $\bar y_+$ is the saddle orbit. The two merge at $56\,\beta_\Sigma^2A=1$.
+The mechanism is a self-consistency of the static phase. The memory equation, $R_{-1}=0$, requires the total $2\omega_a$ component of the junction phase to compensate the static phase that detunes the memory, $\bar y\simeq-C$.
+Since $C\propto\langle X^2\rangle$ grows with $\bar y$, this condition can be met only below a critical coupling.
+
+With $\beta_\Sigma^2A=\bigl[g_2|\alpha|\,(2\varphi_a^2+\varphi_b^2)/(\omega_a\varphi_a\varphi_b)\bigr]^2$, the fold reads
+\begin{equation}
+    g_2^\ast\,|\alpha| = \sqrt{s^\ast}\;\frac{\omega_a\varphi_a\varphi_b}{2\varphi_a^2+\varphi_b^2},
+    \qquad
+    s^\ast = \frac{1}{56}\Bigl(1+\frac{30\rho}{49}\Bigr),
+    \qquad
+    \rho = \frac{\varphi_b^2}{2\varphi_a^2+\varphi_b^2}.
+\label{eq:app_cat_fold}
+\end{equation}
+The factor $(1+30\rho/49)$ is the first-order correction from the $3\omega_a$ sideband, $u\simeq 2\rho\beta_\Sigma\bar y\approx0.1$ at the fold.
+Because the fold sits at a maximum of $\beta_\Sigma^2A$ as a function of $\bar y$, this small sideband shifts $g_2^\ast$ by about $17\%$.
+
+With the parameters of \cref{tab:parameters}, \cref{eq:app_cat_fold} gives $g_2^\ast|\alpha|/2\pi \simeq 216$~MHz, against $219$~MHz from Hill's method with many harmonics. For example, $g_2^\ast/2\pi\simeq96$~MHz (Hill: $97.2$~MHz) at $\varepsilon_d/2g_2=5.06$.
+The full-cosine system \cref{eq:app_sat_bessel} with $\sigma=-1$, solved numerically, reproduces the Hill fold line within $0.1$~MHz for $3\le\varepsilon_d/2g_2\le6.75$.
+\Cref{eq:app_cat_fold} has two consequences. The fold line scales as $g_2^\ast\propto1/|\alpha|$, as observed numerically. It is independent of $\kappa_b$ at this order: a fourfold change of $\kappa_b$ moves it by less than $2$~MHz.
+The chaos onset of the cat-start Lyapunov map lies $6$--$9\%$ below this line. In between, the cat is still stable (all $|\mu|\le0.973$), but its basin no longer contains the initial state $a=i|\alpha|$, $b=0$.

@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# Claude Code personal overrides (settings.json IS tracked and shared)
+.claude/settings.local.json
+
+# Generated results.
+# results/data/ (small .npz benchmark records) IS tracked on purpose --
+# it is the regression baseline the sweeps compare against.
+results/figures/
+**/results/figures/

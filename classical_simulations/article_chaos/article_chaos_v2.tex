@@ -1,0 +1,1976 @@
+%% ======================================================================
+%%  REVTeX 4.2 template -- Physical Review A / X / X Quantum
+%%      pra          -> Physical Review A
+%%      prx          -> Physical Review X
+%%      prxquantum   -> PRX Quantum
+%% ======================================================================
+\documentclass[aps,prx,reprint,floatfix,amsmath,amssymb,longbibliography]{revtex4-2}
+%\documentclass[aps,pra,reprint,amsmath,amssymb,longbibliography]{revtex4-2}
+%\documentclass[aps,prxquantum,reprint,amsmath,amssymb,longbibliography]{revtex4-2}
+
+%% Package Import %%%%%%%%%%%%%%%%%%%%
+
+\usepackage{natbib}
+\usepackage{listings}
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Python,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\usepackage{amsmath,amssymb,mathrsfs}
+\usepackage{latexsym}
+\usepackage{grffile}
+\usepackage{graphicx,epstopdf,color}
+\usepackage{amsfonts}
+\usepackage[hypertexnames=false]{hyperref}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{url}
+\usepackage{soul}
+\usepackage{cancel}
+\usepackage{subcaption}
+\usepackage{bm}
+\usepackage{xr}
+\usepackage{array}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{cleveref}
+\usepackage[american]{circuitikz}
+\usetikzlibrary{calc}
+
+\definecolor{bufcol}{RGB}{245,95,92}
+\definecolor{cqcol}{RGB}{20,170,235}
+\definecolor{gcol}{RGB}{130,130,130}
+\definecolor{atscol}{RGB}{60,60,60}
+
+% --- multi-buffer circuit (fig_multibuffer) -------------------------------
+\tikzset{
+  ats/.style={draw=bufcol, thick, fill=bufcol!10, text=bufcol,
+              minimum width=1.1cm, minimum height=0.75cm, inner sep=1pt,
+              font=\small},
+  port/.style={draw=bufcol, fill=gray!30, text=bufcol,
+               minimum width=1.0cm, minimum height=0.6cm, inner sep=2pt,
+               font=\small},
+}
+% \buffercell{x}{n}: buffer n with its ATS at abscissa x
+% (memory bus at y = 4, buffer node at y = 2.5, ground rail at y = 0)
+\newcommand{\buffercell}[2]{%
+  \draw (#1,4) to[C, l_={$C_{c,#2}$}, *-] (#1,2.5);
+  \begin{scope}[color=bufcol]
+    \fill (#1,2.5) circle (1.5pt);
+    \draw (#1,2.5) -- (#1,1.85);
+    \node[ats] (A#2) at (#1,1.45) {ATS$_{#2}$};
+    \draw (A#2.south) -- (#1,0);
+    \draw (#1,2.5) -- (#1-1,2.5) to[C, l_={$C_{b,#2}$}, color=bufcol] (#1-1,0);
+    \draw (#1,2.5) to[C, l={$C_{p,#2}$}, color=bufcol] (#1+1.3,2.5);
+    \node[port, anchor=west] at (#1+1.3,2.5) {$\kappa_{b_{#2}},\,\eps_{d_{#2}}$};
+    \node[font=\scriptsize, anchor=west] at (A#2.east) {$\eps_{#2}(t)$};
+    \node[font=\small] at (#1-0.5,-0.4) {buffer $b_{#2}$};
+  \end{scope}
+}
+
+%% Cleverref Settings %%%%%%%%%%%%%%%%%%%%
+\crefname{equation}{Eq.}{Eqs.}
+\Crefname{equation}{Equation}{Equations}
+\crefname{figure}{Fig.}{Figs.}
+\Crefname{figure}{Figure}{Figures}
+\crefname{section}{Sec.}{Secs.}
+\Crefname{section}{Section}{Sections}
+\crefname{appendix}{Appendix}{Apps.}
+\Crefname{appendix}{Appendix}{Apps.}
+\crefname{table}{Table}{Tables}
+
+%% New Commands %%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\textalert}[1]{}
+\newcommand{\anticomm}[2]{\left\{#1,#2\right\}}
+\newcommand{\vac}{\left|\,0\,\right\rangle}
+\newcommand{\ket}[1]{\left|#1\right\rangle}
+\newcommand{\bra}[1]{\left\langle#1\right|}
+\newcommand{\bk}[1]{\bigl\langle#1\bigr\rangle}
+\newcommand{\braket}[2]{\bigl\langle#1\bigl|\bigr.#2\bigr\rangle}
+\newcommand{\nn}{\nonumber}
+\newcommand{\pa}{\partial}
+\newcommand{\up}{\uparrow}
+\newcommand{\dw}{\downarrow}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\pd}{{\phantom{\dag}}}
+\newcommand{\Real}[1]{\text{Re}\left(#1\right)}
+\newcommand{\Imag}[1]{\text{Im}\left(#1\right)}
+\newcommand{\pb}[2]{\{#1,#2\}}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newcommand{\D}{\overline{\mathbb{D}}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\U}{\mathcal{U}}
+\newcommand{\Lc}{\mathcal{L}}
+
+\graphicspath{{nb_fig/}}
+\captionsetup[subfigure]{labelformat=brace}
+
+\newcommand{\om}{\omega}
+\newcommand{\da}{^\dagger}
+\newcommand{\ha}{\hat{a}}
+\newcommand{\hb}{\hat{b}}
+\newcommand{\hc}{\hat{c}}
+
+\newcommand{\norm}[1]{\lVert{#1}\rVert}
+
+\DeclareMathOperator{\Tr}{Tr}
+\renewcommand{\Im}{\text{Im}}
+\renewcommand{\Re}{\text{Re}}
+
+\newcommand{\AP}[1]{{\color{RedOrange} [AP: {#1}]}}
+\newcommand{\JC}[1]{{\color{YellowOrange}[JC: {#1}]}}
+\newcommand{\TMD}[1]{{\color{Blue} [TMD: {#1}]}}
+
+\makeatletter
+\def\@fnsymbol#1{\ensuremath{\ifcase#1\or * \or \mathsection\or \mathparagraph\or \|\or **\or \else\@ctrerr\fi}}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\title{Onset of Chaos in dissipative cat qubit}
+
+\author{Théo Malas-Danzé}
+\affiliation{Inria, ENS-PSL, Mines Paris, Alice\& Bob}
+\email[Corresponding author: ]{theo.malas-danze@alice-bob.com}
+
+\author{Joachim Cohen}
+\affiliation{Alice \& Bob}
+
+\author{Alexandru Petrescu}
+\affiliation{Inria, ENS-PSL, Mines Paris}
+
+\date{\today}
+
+\begin{abstract}
+Chaos in quantum computing is seldom a feature that is looked for: it is much harder to stabilize any state and you lose all memory of previous computation step. This is why it is crucial to investigate its onset for any architecture, and if chaos there is, how could we mitigate it. In this paper we focus on the autoparametric dissipative cat qubit, show how it can be driven into chaos, and how to partially avoid it. We set an upper threshold on the two-photon rate and buffer amplitude (cat size) and display ways to push this threshold away. Along the way, we showcase a pipeline to study chaos; the tools presented here are versatile and can be used for any Floquet systems.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+In order to build a useful quantum computer, one need a system which is at the same time stable, to be able to store quantum states, and non-linear, so as to perform non trivial operations. Unfortunately non-linear systems have the tendency to develop chaotic behaviors when their parameters are tuned. First investigations on chaos have been carried in chains of transmons \cite{Berke2022May}. A few years later in single qubit system such as transmons \cite{Cohen2023Apr} and Kerr cat qubit \cite{ChavezCarlos2024Nov} were demonstrated to host chaotic dynamics. A Kerr cat is made out of a single mode and quartic non-linearity and thus it is logical to expect dissipative cat qubits, which are made out of two-modes and a transcendental non-linearity to be able to develop chaos. \TMD{Cite Burgelman}
+
+This paper not only show that chaos can develop in a specific dissipative cat qubit, but also showcase a general method to study the onset of chaos in periodic open quantum systems.
+
+In the first part, we present the dissipative cat qubit system that we investigate. In the second part, we carry a classical analysis of this system and in the third part, we focus on the quantum analysis. Finally, we tackle two ways to mitigate chaos in dissipative cat qubit.
+
+\section{Model / Setup}
+\label{sec:model}
+Dissipative cat qubits is a transatlantic superconducting architecture which has been developed in the mid 2010s at Yale University \cite{Mirrahimi2014Apr} and ENS Paris \cite{Lescanne2019Jul}.
+
+The goal of the dissipative qubit is to stabilize two coherent states $\ket{+\alpha}$ and $\ket{-\alpha}$ in quantum phase space. This is achieved through the two-photon loss Lindbladian
+\begin{equation}
+    \mathcal{L} \propto \mathcal{D}[\hat a^2-\alpha^2].
+\end{equation}
+With this Lindbladian, one of the two errors in quantum computation can be suppressed: when the cat-size $\alpha$ is increased, the bit-flip rate decreases exponentially, while the phase-flip rate only increases linearly \cite{Lescanne2019Jul}.
+Such Lindbladian can be effectively engineered if you add a second mode. The mode $a$ stabilizing the cat state is named "memory" and the second mode $b$ named "buffer": the buffer is leaky and a 2-to-1 photon conversion coupling between the memory and the buffer is implemented \cref{fig_diagram_cat_architecture}. For the photon conversion, a three-wave mixing process, to work we need to account for energy conservation: we opted for the autoparametric architecture \cite{Marquet2024Apr} where the frequency of the buffer is tailored to match twice the frequency of the memory, but one is free to add some pump to account for any frequency disparities \TMD{Add citations on pumped cat from Alice \& Bob and Quantic ENS team}. The reason for this choice is that the autoparametric cat is a Floquet system and is thus easier to analyze.
+
+\begin{figure}[tbp]
+    \centering
+    \begin{subfigure}[t]{0.34\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{Figures/cat-assets/Feynman_diagram_one_mode.pdf}
+        \caption{Diagram of the one-mode cat}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.64\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{Figures/cat-assets/Feynman_diagram_two_mode.pdf}
+        \caption{Diagram of the autoparametric two-mode cat}
+    \end{subfigure}
+    \caption{Diagrams of different cat architectures}
+    \label{fig_diagram_cat_architecture}
+\end{figure}
+
+% Requires in the preamble: \usepackage{circuitikz} and the colors bufcol, cqcol, gcol.
+% \resizebox scales the whole drawing (lines, components, text) to the column width.
+\begin{figure*}[tbp]
+  \centering
+\resizebox{\columnwidth}{!}{%
+\begin{circuitikz}[line cap=round,line join=round,
+  % thickness=1: coil drawn with exactly the same width as the wire it sits on
+  circuit_L/.style = {cute inductor, inductors/scale=1.5,
+    inductors/width=.5, inductors/coils=4, inductors/thickness=1},
+  external_coil/.style = {cute inductor, inductors/scale=1.5,
+    inductors/width=.7, inductors/coils=4, inductors/thickness=1}]
+  % ------------------------------------------------
+  % Global styles (fonts are scaled down by \resizebox:
+  % 16pt -> ~9pt, 18pt -> ~10pt in the final column)
+  % ------------------------------------------------
+  \tikzset{
+    buffer/.style={draw=bufcol, text=bufcol, line width=1.6pt},
+    catq/.style={draw=cqcol, text=cqcol, line width=1.6pt},
+    gstyle/.style={draw=gcol, text=gcol, line width=1.6pt},
+    labbuf/.style={text=bufcol, font=\fontsize{16}{16}\selectfont},
+    titlebuf/.style={text=bufcol, font=\fontsize{18}{18}\selectfont},
+    titlecq/.style={text=cqcol, font=\fontsize{18}{18}\selectfont},
+    jj/.style={draw=bufcol, line width=2.6pt},
+    ccoup/.style={line width=2.6pt}
+  }
+
+  % ------------------------------------------------
+  % Coordinates
+  % ------------------------------------------------
+  \coordinate (BLB) at (0,0);
+  \coordinate (BLT) at (0,4.2);
+  \coordinate (BTopL) at (2.6,4.2);
+  \coordinate (BTopR) at (5.2,4.2);
+  \coordinate (BRB) at (5.2,0);
+  \coordinate (CapLeft)  at (6.85,4.62);
+  \coordinate (CapRight) at (7.15,4.62);
+  \coordinate (QLT) at (8.7,4.2);
+  \coordinate (QLB) at (8.7,0);
+  \coordinate (QRT) at (12.0,4.2);
+
+  % ------------------------------------------------
+  % Buffer outer frame and top wire
+  % ------------------------------------------------
+  \draw[buffer] (BLB) -- (BLT) -- (BTopL);
+  \draw[buffer] (BTopL) -- (2.6,4.62) -- (CapLeft);
+  \draw[buffer] (BTopL) -- (BTopR) -- (BRB) -- (BLB);
+  \draw[buffer] (2.6,4.62) -- (0.875,4.62);
+
+  % ------------------------------------------------
+  % Memory frame (inductor inherits the 1.6pt wire width)
+  % ------------------------------------------------
+  \draw[catq] (CapRight) -- (10.35,4.62) -- (10.35,4.2);
+  \draw[catq] (QLT) -- (QRT) to[C, -] ++(0,-4.2) -- (QLB)
+              to[circuit_L, -] ++(0,4.2) -- cycle;
+
+  % ------------------------------------------------
+  % Coupling capacitors
+  % ------------------------------------------------
+  \draw[buffer, ccoup] (0.875,4.62) -- ++(0,-0.28) -- ++(0,0.56);
+  \draw[gstyle, ccoup] (0.575,4.62) -- ++(0,-0.28) -- ++(0,0.56);
+  \draw[buffer, ccoup] (CapLeft)  -- ++(0,-0.28) -- ++(0,0.56);
+  \draw[catq,   ccoup] (CapRight) -- ++(0,-0.28) -- ++(0,0.56);
+
+  % ------------------------------------------------
+  % Buffer: Josephson junctions, inductor and capacitor
+  % ------------------------------------------------
+  \draw[jj] (-0.22,2.42) -- (0.22,1.88);
+  \draw[jj] (-0.22,1.88) -- (0.22,2.42);
+  \draw[buffer] (3.45,4.2) to[C, -] ++(0,-4.2);
+  \draw[buffer] (1.75,0) to[circuit_L, -] ++(0,4.2);
+  \draw[jj] (4.98,2.42) -- (5.42,1.88);
+  \draw[jj] (4.98,1.88) -- (5.42,2.42);
+
+  % ------------------------------------------------
+  % Grounds
+  % ------------------------------------------------
+  \draw[buffer] (2.6,0) -- (2.6,-0.35);
+  \draw[buffer] (2.30,-0.35) -- (2.60,-0.65) -- (2.90,-0.35) -- cycle;
+  \draw[catq] (10.35,0) -- (10.35,-0.35);
+  \draw[catq] (10.05,-0.35) -- (10.35,-0.65) -- (10.65,-0.35) -- cycle;
+
+  % ------------------------------------------------
+  % External flux lines (one continuous path each)
+  % ------------------------------------------------
+  \draw[gstyle] (0.1,-2) -- (0.1,-0.5) to[external_coil, -] (1.65,-0.5) -- (1.65,-2);
+  \draw[gstyle] (3.6,-2) -- (3.6,-0.5) to[external_coil, -] (5.15,-0.5) -- (5.15,-2);
+
+  % ------------------------------------------------
+  % Input line (coax + ground)
+  % ------------------------------------------------
+  \draw[gstyle] (0.575,4.62) -- (-1,4.62);
+  \draw[gstyle] (-1,4) -- (-3,4);
+  \draw[gstyle] (-1,5.24) -- (-3,5.24);
+  \draw[gstyle] (-2,4) -- (-2,3.65);
+  \draw[gstyle] (-2.3,3.65) -- (-2,3.35) -- (-1.7,3.65) -- cycle;
+  \draw[gstyle] (-1,4.62) ellipse (0.2 and 0.62);
+
+  % ------------------------------------------------
+  % Titles and labels
+  % ------------------------------------------------
+  \node[titlebuf] at (2.6,5.0)   {Buffer};
+  \node[titlecq]  at (10.35,5.0) {Memory};
+  \node[labbuf]   at (-0.72,2.15) {$E_{J}$};
+  \node[labbuf]   at (5.90,2.15)  {$E_{J}$};
+\end{circuitikz}%
+}
+\caption{Example of circuit implementing the autoparametric cat qubit.}
+\label{fig:circuit_basic}
+\end{figure*}
+Such qubit is built with the three musketeers of superconducting circuits: capacitor, inductors and Josephson junctions. In an ideal world, this last element brings all the non-linearity in the system thanks to the Josephson relations between the current $I$ through the junction, the voltage $V$ across it and its phase $\phi$
+\begin{equation}
+    I = I_c\sin\phi,\qquad V=\Phi_0\dot\phi,
+\end{equation}
+where $I_c$ is the critical current and $\Phi_0=\hbar/2e$ is the reduced magnetic flux quantum. The junction thus behaves as a nonlinear inductor of energy $-E_J\cos\phi$, with $E_J=\Phi_0I_c$. The Hamiltonian of such a circuit contains transcendental (trigonometric) terms and any polynomial expression is only an approximation.
+
+In this paper, we researchers living in an ideal world, we focus on cat qubit without any parasitic terms, but due to some personal repulsion for approximations, we will keep the whole nonlinearity.
+
+The Hamiltonian of a dissipative cat qubit reads \cite{Carde2025Feb}
+\begin{equation}
+\begin{split}
+    H =\;& \omega_a\ha\da\ha+\omega_b\hb\da\hb+\eps_d\cos(\omega_d t)(\hb+\hb\da)\\
+    &-g\sin(\hat\varphi_a+\hat\varphi_b+\varphi_d).
+\end{split}
+\label{eq_ham_0}
+\end{equation}
+The phase offset $\varphi_d$ is set by a DC flux. The sine coupling contains a linear term, $-g(\hat\varphi_a+\hat\varphi_b)$ at $\varphi_d=0$, which is a static drive on both modes. It displaces them, and around the displaced point the nonlinearity shifts their frequencies as $g$ is varied. A DC change of frame, $\ha\to\ha-\eps_a/\omega_a$, absorbs a static drive $\eps_a(\ha+\ha\da)$ into a shift of the junction phase (\cref{app:dc_frame}). Applied to both modes, it shows that the choice
+\begin{equation}
+    \varphi_d=-2g\Bigl(\frac{\varphi_a^2}{\omega_a}+\frac{\varphi_b^2}{\omega_b}\Bigr)
+    \label{eq_phi_d}
+\end{equation}
+cancels the linear term of the sine coupling, and the Hamiltonian becomes
+\begin{equation}
+\begin{split}
+    H =\;& \omega_a\ha\da\ha+\omega_b\hb\da\hb+\eps_d\cos(\omega_d t)(\hb+\hb\da)\\
+    &-g\bigl[\sin(\hat\varphi_a+\hat\varphi_b)-\hat\varphi_a-\hat\varphi_b\bigr],
+\end{split}
+\label{eq_ham}
+\end{equation}
+in the displaced frame. The offset depends on the coupling rate: with the parameters of \cref{tab:parameters}, $|\varphi_d|=1.82\sin\eps_p$, from $0.36$ to $1.62$ over our range of $\eps_p$.
+The coupling rate is set by the junction energy and the static pump flux, $g=2E_J\sin\eps_p$. Expanding \cref{eq_ham} to third order, the only term resonant for $\omega_b=2\omega_a$ is the two-photon exchange $g_2(\ha^2\hb\da+\text{h.c.})$, with
+\begin{equation}
+    g_2=E_J\sin\eps_p\,\varphi_a^2\varphi_b
+    \label{eq_g2}
+\end{equation}
+(\cref{app:cat_hamiltonian}). At this order, the drive stabilizes cats of size $|\alpha|^2=\eps_d/2g_2$. The parameter values are listed in \cref{tab:parameters}.
+The dissipation is also considered as ideal, meaning that there is only single-photon loss on the buffer
+\begin{equation}
+    L=\kappa_b\mathcal{D}[b],
+\end{equation}
+so that the buffer amplitude decays as $\langle\dot{\hat b}\rangle=-(\kappa_b/2)\langle\hat b\rangle$. We use $\kappa_b/2\pi\simeq96~\mathrm{MHz}$ throughout.
+Previous works have investigated the impact of loss on the memory on the dynamics\cite{Carde2025Feb} or on the bit-flip time\cite{Dubovitskii2025Jan}.
+
+\section{Classical analysis}
+\label{sec:classical_analysis}
+In order to build some intuition, we first look at the classical dynamics of \cref{eq_ham}. There are two ways to derive the equations that we studied. The first one consist of considering the quantum Hamiltonian as a classical Hamiltonian by asking the operators to kindly doff their hats, then we derive Hamilton equation and we add decay on one of the quadrature.
+The second way is to start with the GKSL equation, write the equations of motion of the expectation values $\langle\ha\rangle$ and $\langle\hb\rangle$, and neglect the fluctuations of the junction phase (mean-field approximation, \cref{app:derivation_classical_equation}).
+\begin{equation}
+    \begin{cases}
+        \dot a &= -i\omega_a a+ig\,\varphi_a\bigl(\cos X-1\bigr),\\
+        \dot b &= -\Bigl(i\omega_b+\frac{\kappa_b}{2}\Bigr)b-i\eps_d\cos(\omega_d t)\\
+        &\quad+ig\,\varphi_b\bigl(\cos X-1\bigr),
+    \end{cases}
+\label{eq_classical_dynamics}
+\end{equation}
+with $X=\varphi_a(a+a^*)+\varphi_b(b+b^*)$.
+
+\subsection{Phase-space trajectories}
+\label{subsec:phase_space_traj}
+The first analysis consists of launching many trajectories in phase-space and study their behavior: do some diverge? do some converge? The trajectories are shown on \cref{fig_limit_cycles}.Should we consider the RWA cat, all the trajectories ends up either in $\ket{\alpha,0}$ or $\ket{-\alpha,0}$. Here we take all the non-linearities and rotating terms into account, so that the dynamics is more involved. First of all, in addition to the trajectories (in blue) converging close to $\ket{\pm\alpha,0}$, some trajectories (in red) converge towards excited limit cycles named hereafter the satellite. Because of the sine coupling in the Hamiltonian \cref{eq_ham}, the Jacobi--Anger expansion of the nonlinearity contains Bessel functions of all orders, each with infinitely many zeros, up to arbitrarily large amplitude. The dynamical system \cref{eq_classical_dynamics} therefore admits infinitely many periodic solutions, whereas any polynomial truncation, or harmonic balance with a finite number of harmonics, keeps only finitely many. The satellite presented on \cref{fig_limit_cycles} are the first excited stable ones. To summarize, we got two sets of limit cycles: the blue ones corresponding to the cat states and the red satellites. The question becomes now: how do these satellites impact the dynamics that generates the blue limit-cycles.
+
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=0.5\columnwidth]{Chaos/figures_article/classical_limit_cycles_HB_12_10_2026.pdf}
+    \caption{Limit cycles for the buffer phase space (left) and the memory phase space (right): blue dots corresponds to the cat limit cycles, found by letting trajectories converge to them. The red dots represent the satellite limit cycles, also found by letting trajectories converge in phases space. The yellow dashed line corresponds to the prediction of the harmonic balance.}
+    \label{fig_limit_cycles}
+\end{figure}
+
+\subsection{Study of stability of the limit-cycles : Hill's method}
+\label{subsec:hill}
+In order to answer this question, we study the stability of the satellites thanks to Hill's method and follow the steps described in \cite{Detroux2015Nov}. We first apply harmonic balance and find an approximation of the satellite limit cycle (yellow dashed lines on \cref{fig_limit_cycles}): the error on the approximation is controlled by the number of harmonics that are kept in the Ansatz for the harmonic balance, the larger, the more precise. Note that you can also derive analytically the center and the radii of the satellite \cref{app:derivation_harmonic_balance}.
+
+To study the stability of the satellite limit-cycle, we focus on the dynamics at the vicinity of them, like we would do for a fixed point. 
+Let $\boldsymbol{x}^*(t)$ be the periodic solution of a limit-cycle, of period $T$. We perturb this solution
+\begin{equation}
+    \boldsymbol{x}(t)=\boldsymbol{x}^*(t)+e^{\sigma t}\boldsymbol{\delta}\boldsymbol{x}(t),
+\end{equation}
+where $\boldsymbol{\delta}\boldsymbol{x}$ has the period $T$ and $\sigma$ is a Floquet exponent.
+
+Since we work in a 4d space, there are 4 Floquet exponents $\sigma_i$. Over one period, the perturbation is multiplied by the Floquet multipliers $\mu_i=e^{\sigma_iT}$, $i\in\{1,2,3,4\}$\footnote{The equations of motion are real, so the multipliers are either real or come in complex-conjugate pairs: four real multipliers, two real multipliers and one complex pair, or two complex pairs. Their product is fixed by the Liouville formula, $\prod_i\mu_i=e^{-\kappa_bT}$, because the buffer loss contracts phase-space volumes at the rate $\kappa_b$.}. They decide the stability of the limit cycle:
+\begin{itemize}
+    \item $\forall i \: |\mu_i|<1$: nearby trajectories converge to the limit cycle, it is stable;
+    \item $\exists i\:|\mu_i|>1$: nearby trajectories move away from the limit cycle, it is unstable.
+\end{itemize}
+As a parameter is varied, a stable limit cycle loses stability when a multiplier crosses the unit circle. This happens in one of three generic ways:
+\begin{itemize}
+    \item a real multiplier crosses $+1$: a saddle-node bifurcation of limit cycles, where a stable and an unstable limit cycle are created or annihilated together;
+    \item a real multiplier crosses $-1$: a period-doubling bifurcation. The limit cycle becomes unstable and a new limit cycle with twice the period appears, whose stability has to be studied in turn;
+    \item a pair of complex-conjugate multipliers crosses the unit circle, $|\mu_i|=1$ with $\mu_i\neq\pm1$: a Neimark--Sacker bifurcation. The limit cycle becomes unstable and a quasi-periodic motion on a torus appears.
+\end{itemize}
+Only the modulus $|\mu_i|$ detects all three crossings, so this is what we plot in \cref{fig_floq_mult_below_period_doubling,fig_floq_mult_above_period_doubling}.
+
+The first parameter we tune is the two-photon exchange rate $g_2$, at fixed $\eps_d/2g_2=5.06$. For low values of $g_2$, all multipliers satisfy $|\mu_i|<1$ and the satellite is stable. At $g_2/2\pi\simeq75.3~\mathrm{MHz}$, a real multiplier crosses $-1$ and the satellite period-doubles (\cref{fig_floq_mult_below_period_doubling}). The period-2 orbit created there is stable at first, but at $g_2/2\pi\simeq76.7~\mathrm{MHz}$ a complex-conjugate pair of its multipliers leaves the unit circle (\cref{fig_floq_mult_above_period_doubling}): it loses stability through a Neimark--Sacker bifurcation. \TMD{Link NS bifurcation and chaos in previous works?} We now show that this instability threshold is related to the onset of chaos in this system.
+
+
+\begin{figure}[tbp]
+    \centering
+    % --- Left column: three small plots stacked vertically ---
+    \begin{minipage}[c]{0.2\columnwidth}
+        \centering
+        \begin{subfigure}[tbp]{\columnwidth}
+            \centering
+            \includegraphics[width=\columnwidth]{Figures/article_chaos/stabilization_limit_cycle.pdf}
+            \caption{Stabilization}
+            \label{fig_scheme_stabilization}
+        \end{subfigure}
+        \vspace{0.5cm}
+        \begin{subfigure}[tbp]{\columnwidth}
+            \centering
+            \includegraphics[width=\columnwidth]{Figures/article_chaos/period_doubling_limit_cycles.pdf}
+            \caption{Period doubling}
+            \label{fig_scheme_period_doubling}
+        \end{subfigure}
+        \vspace{0.5cm}
+        \begin{subfigure}[tbp]{\columnwidth}
+            \centering
+            \includegraphics[width=\columnwidth]{Figures/article_chaos/instability_limit_cycles.pdf}
+            \caption{Instability}
+            \label{fig_scheme_unstabilization}
+        \end{subfigure}
+    \end{minipage}
+    \hfill
+    % --- Right column: two plots stacked vertically ---
+    \begin{minipage}[c]{0.78\columnwidth}
+        \centering
+        \begin{subfigure}[tbp]{\columnwidth}
+            \centering
+            \includegraphics[width=\columnwidth]{Chaos/figures_article/floquet_multiplier_modulus_before_period_doubling_12_10_2026.pdf}
+            \caption{Satellite orbit, period $T=4\pi/\omega_b$. Inset: $\mathrm{Re}\,\mu$ near the crossing of $-1$.}
+            \label{fig_floq_mult_below_period_doubling}
+        \end{subfigure}
+        \vspace{0.5cm}
+        \begin{subfigure}[tbp]{\columnwidth}
+            \centering
+            \includegraphics[width=\columnwidth]{Chaos/figures_article/floquet_multiplier_modulus_after_period_doubling_12_10_2026.pdf}
+            \caption{Period-doubled orbit, period $T=8\pi/\omega_b$. Inset: path of the multipliers in the complex plane; the dots mark where a complex pair crosses the unit circle.}
+            \label{fig_floq_mult_above_period_doubling}
+        \end{subfigure}
+    \end{minipage}
+    \caption{Stability of the satellite limit-cycles at $\eps_d/2g_2=5.06$. (a)--(c) Sketches of a stable limit cycle, of a period doubling and of an unstable limit cycle. (d), (e) Modulus of the Floquet multipliers $|\mu_i|$ against $g_2$. The orange dashed line marks the period doubling of the satellite ($\mu=-1$, $g_2/2\pi\simeq75.3~\mathrm{MHz}$). The period-doubled orbit is stable only in the green band, up to the Neimark--Sacker bifurcation at $g_2/2\pi\simeq76.7~\mathrm{MHz}$.}
+    \label{fig_hill_method}
+\end{figure}
+
+
+\subsection{Characterizing chaos}
+\label{subsec:chaos_lyap}
+
+The most accessible signature of chaos is to analyze phase space trajectories as done on \cref{fig_classical_onset_of_chaos_trajectories_low,fig_classical_onset_of_chaos_trajectories_mid,fig_classical_onset_of_chaos_trajectories_high}. For low value of $g_2$, all trajectories in phase space are regular (cf \cref{fig_classical_onset_of_chaos_trajectories_low}), then when $g_2$ exceeds the stability threshold, two chaotic basins develop around the satellites (cf \cref{fig_classical_onset_of_chaos_trajectories_mid}) and finally, if $g_2$ keeps increasing, these basins grow and take over the phase space (cf \cref{fig_classical_onset_of_chaos_trajectories_high}).
+
+In order to properly characterize the classical chaos, we use the maximal Lyapunov exponent $\lambda$, computed with the two-trajectory method described in \cref{app:lyap_method}. We run into the issue that a Lyapunov exponent is defined for a given trajectory in phase space, \textit{i.e.} a given initial point. We chose to focus on the trajectory initialized in the phase-space origin $(0,0)$. In the rotating-wave picture, the origin is the saddle point between the basins of the two cats. It is where a cat is prepared from the vacuum, and where the bit-flip path between the two cats goes. A trajectory starting there therefore tests whether the dynamics still reaches a cat, rather than whether the cat attractor itself is stable. Starting directly on a cat gives a higher threshold (\cref{fig:lyapunov_heatmap_cat_start}): chaos then appears $5$ to $23~\mathrm{MHz}$ further in $g_2$, and not at all in our range for $\eps_d/2g_2\le2.5$. The thresholds quoted below refer to the vacuum start.
+
+On \cref{fig_classical_onset_of_chaos_heatmap}, we tune two parameters: the two-photon exchange rate $g_2$ on the x axis and the buffer drive $\eps_d$, which determine the cat size (when a cat can be defined). This heatmap can be separated in three blocs:
+\begin{itemize}
+    \item The blue region on the left (with point a), where the trajectory initialized at the origin is regular
+    \item The blue region in the middle (with point b, the chaotic basin develop around the satellite limit-cyles but the trajectory that starts in the origin stay regular
+    \item The (vastly) red region on the right (with point c), the trajectory is (almost) always chaotic \footnote{The blue islands are due to highly excited stable limit-cycle: due to chaos, the trajectory starting in the origin is quickly sent to these stable cycles and it appears as regular}.
+\end{itemize}
+
+The onset of chaos follows the instability of the satellites. To show it, we start the trajectories on the satellite itself (\cref{fig_lyap_satellite_start}). Below the black line, the trajectory stays on the satellite, or relaxes to a cat where the satellite is not yet stable. Just beyond it, the trajectory becomes chaotic. For $\eps_d/2g_2\ge2$, the onset of chaos and the Neimark--Sacker instability of the period-doubled satellite from Hill's method coincide within one or two grid cells (about $1~\mathrm{MHz}$ each). The destabilization of the satellites is therefore the route to chaos. From the vacuum, the onset coincides with the same line for $\eps_d/2g_2\gtrsim4$ (\cref{fig_classical_onset_of_chaos_heatmap}), but lies at larger $g_2$ for smaller drives, by up to $30~\mathrm{MHz}$ at $\eps_d/2g_2=2$: the trajectory first has to fall into the basin of the chaotic set. The details of this map are given in \cref{app:lyap_satellite}.
+
+The maximal Lyapunov exponent is a finite-time estimate, so we checked that the onset of chaos does not depend on the integration settings (\cref{app:lyap_method}). Multiplying the averaging time by up to eight, extending the discarded transient fourfold, changing the initial separation by two orders of magnitude or tightening the solver tolerance leaves the onset line unchanged on at least $84$ of its $100$ rows, and moves it by at most $7~\mathrm{MHz}$ elsewhere. Far above the onset, for $g_2/2\pi\gtrsim100~\mathrm{MHz}$, the map is less robust: part of the chaos there is transient (\cref{sec:transient_chaos}).
+
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=\columnwidth]{Chaos/figures_article/heatmap_lyapunov_satellite_start_12_10_2026.pdf}
+    \caption{Trajectories started on the satellite. Left: sign of the largest Lyapunov exponent (blue $\lambda<0$, red $\lambda>0$). Right: end state (satellite, cat or chaotic, see \cref{app:lyap_satellite}). Blank: no satellite solution. Black line: Neimark--Sacker instability of the period-doubled satellite from Hill's method (\cref{subsec:hill}).}
+    \label{fig_lyap_satellite_start}
+\end{figure}
+
+We have found an upper threshold in some classical limit of the autoparametric dissipative cat, can we do the same on the quantum model directly?
+
+\begin{figure}[tbp]
+    \centering
+    % --- Left column: three small plots stacked vertically ---
+    \begin{minipage}[c]{0.2\columnwidth}
+        \centering
+        \begin{subfigure}[tbp]{\columnwidth}
+            \centering
+            \includegraphics[width=\columnwidth]{Chaos/figures_article/phase_space_traj_g2_60MHz_12_10_2026.png}
+            \caption{Low $g_2$.}%: regular, periodic trajectory.}
+            \label{fig_classical_onset_of_chaos_trajectories_low}
+        \end{subfigure}
+        \vspace{0.5cm}
+        \begin{subfigure}[tbp]{\columnwidth}
+            \centering
+            \includegraphics[width=\columnwidth]{Chaos/figures_article/phase_space_traj_g2_88MHz_12_10_2026.png}
+            \caption{Intermediate $g_2$.}%: chaotic basins start to develop.}
+            \label{fig_classical_onset_of_chaos_trajectories_mid}
+        \end{subfigure}
+        \vspace{0.5cm}
+        \begin{subfigure}[tbp]{\columnwidth}
+            \centering
+            \includegraphics[width=\columnwidth]{Chaos/figures_article/phase_space_traj_g2_105MHz_12_10_2026.png}
+            \caption{High $g_2$.}%: fully chaotic trajectories.}
+            \label{fig_classical_onset_of_chaos_trajectories_high}
+        \end{subfigure}
+    \end{minipage}
+    \hfill
+    % --- Right column: the single large plot ---
+    \begin{subfigure}[c]{0.78\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{Chaos/figures_article/lyapunov_heatmap_origin_start_12_10_2026.pdf}
+        \caption{Sign of the maximal Lyapunov exponent for the trajectory starting in the phase space origin $(a=0, b=0)$: regular ($\lambda<0$, blue) or chaotic ($\lambda>0$, red). Yellow line: onset of chaos, the smallest $\eps_d/2g_2$ with $\lambda>0$ at each $g_2$. Black line: instability of the satellites from Hill's method (\cref{subsec:hill}).}
+        \label{fig_classical_onset_of_chaos_heatmap}
+    \end{subfigure}
+    \caption{Classical onset of chaos}
+    \label{fig_classical_onset_of_chaos}
+\end{figure}
+
+\section{Quantum analysis}
+\label{sec:quantum_analysis}
+
+A difficulty that arises in the quantum model is to find the right metric for quantum chaos. Quantum chaos in open quantum systems has been investigated under diverse lenses: inverse participation ratio \cite{Borner2024Aug}, observation entropy \cite{Pg2022Dec}, truncated Wigner method \cite{Pappalardi2020Aug}, spectral properties of the Lindbladian \cite{Sa2020Apr}. In order to be able to compare the quantum results with the classical prediction, we chose to work with a metric that provides a quantum mechanical analog to the maximal Lyapunov exponent: the Out-Of-Time-Order Correlator (OTOC) \cite{Larkin1969Jun}. The OTOC is defined as 
+\begin{equation}
+    C(t)=-\left\langle\left[\hat x_a(t),\hat p_a(0)\right]^2\right\rangle
+\end{equation}
+and at short time, $C(t)\sim e^{2\lambda t}$, where $\lambda$ is the maximal Lyapunov exponent when we take the quasiclassical limit of the commutator \cite{Garcia-Mata2022Sep}.
+
+We propagate the position operator in the Heisenberg picture of the open system, $\hat x_a(t)=\Phi^\dagger(t,0)\,\hat x_a$, where $\Phi(t,0)$ is the Lindblad channel from $0$ to $t$ and $\Phi^\dagger$ its adjoint \cite[p.~125]{Breuer2006Jan}. Because the drive makes the Lindbladian $\mathcal L_t$ time dependent, $\hat x_a(t)$ does not follow the forward adjoint master equation $\dot{\hat x}_a=\mathcal L_t^\dagger\hat x_a$, which holds only for a time-independent generator. For each final time $t$, it is obtained instead from the backward equation
+\begin{equation}
+    \frac{d\hat Y}{du}=\mathcal L^\dagger_{t-u}\hat Y,\qquad \hat Y(0)=\hat x_a,\qquad \hat Y(t)=\hat x_a(t),
+    \label{eq_otoc_backward}
+\end{equation}
+with $\mathcal L_t^\dagger\hat Y=i[H(t),\hat Y]+\kappa_b\bigl(\hat b\da\hat Y\hat b-\tfrac12\{\hat b\da\hat b,\hat Y\}\bigr)$, in which $\hat b$ is the Schrödinger-picture operator. The periodicity of $\mathcal L_t$ gives all the times $t=r+n\tau$ from a single integration (\cref{app:otoc}). We compute the OTOC over an approximation of the stabilized cat-state and fit it with an exponential.
+
+ First, we see two regimes: at low values of the two-photon exchange rate $g_2$, the cat is stabilized (cf \cref{fig_wigner_cat_low}) and for large values of $g_2$, the Wigner distribution is delocalized over the phase space (cf \cref{fig_wigner_cat_high}). The evolution of the OTOC is showed in the inset of \cref{fig_quantum_onset_of_chaos}: for small $g_2$, the OTOC stays flat and for large $g_2$, it grows like an exponential with some modulation (since the Lindbladian is time-dependent\footnote{The curve is not periodic because the system is chaotic.}). 
+
+Finally, we draw heatmap of the Lyapunov exponent extracted from the OTOC where we again act on the two-photon exchange rate $g_2$ and the buffer drive $\eps_d$. We again find that increasing either parameter drive the system from a regular dynamics to chaos. \TMD{ Nevertheless, the threshold in the quantum model is below the classical threshold: Lyapunov exponent from the OTOC are positive even below the yellow line on \cref{fig_quantum_onset_of_chaos}. This is explained by the intrinsic quantum delocalization: classical dynamics can be oblivious to the chaotic basin whereas the quantum dynamics can be more easily impacted by them. WRONG!}
+
+One questions remains though: are there ways to push the threshold to larger parameters range?
+
+\begin{figure}[h]
+    \centering
+    \begin{minipage}[c]{0.25\columnwidth}
+    \centering
+    \begin{subfigure}[tbp]{\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{Chaos/figures_article/Screenshot 2026-10-12 at 18.59.39.png}
+        \caption{Low $g_2$.}%: regular, periodic trajectory.}
+        \label{fig_wigner_cat_low}
+    \end{subfigure}
+    \vspace{0.5cm}
+    \begin{subfigure}[tbp]{\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{Chaos/figures_article/Screenshot 2026-10-12 at 18.57.53.png}
+        \caption{High $g_2$.}%: chaotic basins start to develop.}
+        \label{fig_wigner_cat_high}
+    \end{subfigure}
+    \end{minipage}
+    \hfill
+    \begin{subfigure}[c]{0.7\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{Chaos/figures_article/Lyapunov_from_OTOC_init_cat_12_10_2026.pdf}
+        \caption{Heatmap of the maximum Lyapunov exponent found by fitting the OTOC. The average is taken on a cat-state.}
+        \label{fig_quantum_onset_of_chaos_heatmap}
+    \end{subfigure}
+    \caption{Quantum onset of chaos. The subfigures \cref{fig_wigner_cat_low} and \cref{fig_wigner_cat_high} represent Wigner distribution obtained after some times when the initial state is a cat state.}
+    \label{fig_quantum_onset_of_chaos}
+\end{figure}
+
+
+\section{Mitigation techniques}
+\label{sec:mitigation}
+In this last section, we present three ways to keep the regular dynamics on larger range.
+
+\subsection{Increasing the single photon loss}
+\label{subsec:increasing_photon_loss}
+
+A first solution, which allows one to keep the initial circuit, would be to increase the single photon loss rate $\kappa_b$ on the buffer. The instability threshold increases linearly with the single photon rate \TMD{Explanation?}, at large value of the rate, cf \cref{fig:instability_vary_kappa_b}.
+
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=\columnwidth]{Chaos/figures_article/instability_vary_kappa_b_12_10_2026.pdf}
+    \caption{Study of the instability threshold when the single photon rate on the buffer is varied. The gray dashed line corresponds to the value taken for the study in hereinabove plots.}
+    \label{fig:instability_vary_kappa_b}
+\end{figure}
+
+\subsection{Multi-buffer architecture}
+\label{subsec:multi_buffer}
+In a similar spirit, instead of increasing the single photon loss rate, we could maybe introduce new loss channels to mitigate the apparition of chaos?
+The second solution is to increase the number of buffers, so that the energy is split between them. The Hamiltonian of such a system reads
+\begin{equation}
+    \begin{split}
+        H_\mathrm{m.b.} =\;& \om_a\hat a^\dagger \hat a + \sum\biggl\{\om_{b_n} \hat b_n^\dagger \hat b_n + \eps_{d_n}\cos(\om_{d_n}t)(\hat b_n + \hat b_n\da) \\&-g_n\left[\sin\left(\hat \varphi_a + \hat  \varphi_{b_n} \right)-\hat \varphi_a - \hat \varphi_{b_n}\right]\biggr\}.
+    \end{split}
+    \label{eq:multi-buffer-ham}
+\end{equation}
+Shall we perform RWA on this system, we would obtain
+\begin{equation}
+    H_\mathrm{m.b.}^\mathrm{RWA}= \sum \eps_{d_n}(\hat b_n + \hat b_n\da)/2 + \left( a^2 \sum_n g_{n,2}  b_n^\dagger + \text{h.c.} \right),
+\end{equation}
+hence we can define some effective two-photon exchange rate 
+\begin{equation}
+    g_2^\mathrm{eff}=\sum_n g_{n,2}.
+\end{equation}
+We compute the maximal Lyapunov for one, two and three buffers which supposedly have the same frequency $\om_{b_n}=2\om_a$ and identical drive amplitude. As shown on \cref{fig:Lyap_multi_buffer_each}, the more buffer we add, the higher the threshold for chaos.
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=\columnwidth]{Chaos/figures_article/lyapunov_multi_buffer_12_10_2026.pdf}
+    \caption{Maximum Lyapunov exponent $\lambda$ for the trajectory initiated in the phase-space origin}
+    \label{fig:Lyap_multi_buffer_each}
+\end{figure}
+
+An example of a circuit that would implement the multi-buffer Hamiltonian \cref{eq:multi-buffer-ham} is presented on \cref{fig_multibuffer_circuit}. However such circuit can be quite painful to design and work with since you increase the number of modes to fabricate and to calibrate afterwards. Couldn't we find another solution?
+
+\begin{figure*}[tbp]
+  \centering
+\resizebox{\textwidth}{!}{%
+\begin{circuitikz}[line cap=round,line join=round,
+  circuit_L/.style = {cute inductor, inductors/scale=1.5,
+    inductors/width=.5, inductors/coils=4, inductors/thickness=1},
+  buffer/.style={draw=bufcol, text=bufcol, line width=1.6pt},
+  catq/.style={draw=cqcol, text=cqcol, line width=1.6pt},
+  gstyle/.style={draw=gcol, text=gcol, line width=1.6pt},
+  labbuf/.style={text=bufcol, font=\fontsize{16}{16}\selectfont},
+  titlebuf/.style={text=bufcol, font=\fontsize{18}{18}\selectfont},
+  titlecq/.style={text=cqcol, font=\fontsize{18}{18}\selectfont},
+  jjbuf/.style={draw=bufcol, line width=2.6pt},
+  ccoup/.style={line width=2.6pt}]
+
+  % ================================================
+  % MEMORY (LC resonator), x in [-6.4, -3.1]
+  % ================================================
+  \draw[catq] (-6.4,0) to[circuit_L, -] (-6.4,4.2) -- (-3.1,4.2);
+  \draw[catq] (-3.1,4.2) to[C, -] (-3.1,0) -- (-6.4,0);
+  \draw[catq] (-4.75,0) -- (-4.75,-0.35);
+  \draw[catq] (-5.05,-0.35) -- (-4.75,-0.65) -- (-4.45,-0.35) -- cycle;
+  \node[titlecq] at (-4.75,-1.2) {Memory $a$};
+
+  % ================================================
+  % MEMORY BUS (blue), dashed between buffer 2 and buffer N
+  % ================================================
+  \draw[catq] (-4.75,4.2) -- (-4.75,6.2) -- (14.4,6.2);
+  \draw[catq, dashed] (14.4,6.2) -- (18.8,6.2);
+  \draw[catq] (18.8,6.2) -- (22.6,6.2);
+
+  % ================================================
+  % BUFFERS: ATS (JJ, L, C, JJ) + coupling to bus + own grey port
+  % \x = left edge of the ATS frame, \n = buffer index
+  % ================================================
+  \foreach \x/\n in {0/1, 9/2, 20/N}{
+    % ATS frame: junction | inductor | capacitor | junction
+    \draw[buffer] (\x,0) -- (\x,4.2) -- (\x+5.2,4.2) -- (\x+5.2,0) -- cycle;
+    \draw[buffer] (\x+1.75,0) to[circuit_L, -] ++(0,4.2);
+    \draw[buffer] (\x+3.45,4.2) to[C, -] ++(0,-4.2);
+    \draw[jjbuf] (\x-0.22,2.42) -- (\x+0.22,1.88);
+    \draw[jjbuf] (\x-0.22,1.88) -- (\x+0.22,2.42);
+    \draw[jjbuf] (\x+4.98,2.42) -- (\x+5.42,1.88);
+    \draw[jjbuf] (\x+4.98,1.88) -- (\x+5.42,2.42);
+    % ground
+    \draw[buffer] (\x+2.6,0) -- (\x+2.6,-0.35);
+    \draw[buffer] (\x+2.3,-0.35) -- (\x+2.6,-0.65) -- (\x+2.9,-0.35) -- cycle;
+    \node[titlebuf] at (\x+2.6,-1.2) {Buffer $b_{\n}$};
+    % node above the ATS, coupling capacitor to the memory bus
+    \draw[buffer] (\x+2.6,4.2) -- (\x+2.6,5.27);
+    \draw[buffer, ccoup] (\x+2.6,5.27) -- ++(-0.28,0) -- ++(0.56,0);
+    \draw[catq,   ccoup] (\x+2.6,5.57) -- ++(-0.28,0) -- ++(0.56,0);
+    \draw[catq] (\x+2.6,5.57) -- (\x+2.6,6.2);
+    \fill[cqcol] (\x+2.6,6.2) circle (0.09);
+    % own grey port, capacitively coupled to the buffer node
+    \draw[buffer] (\x+2.6,4.62) -- (\x+4.6,4.62);
+    \fill[bufcol] (\x+2.6,4.62) circle (0.09);
+    \draw[buffer, ccoup] (\x+4.6,4.62) -- ++(0,-0.28) -- ++(0,0.56);
+    \draw[gstyle, ccoup] (\x+4.9,4.62) -- ++(0,-0.28) -- ++(0,0.56);
+    \draw[gstyle] (\x+4.9,4.62) -- (\x+6.3,4.62);
+    \draw[gstyle] (\x+6.3,4.62) ellipse (0.2 and 0.62);
+    \draw[gstyle] (\x+6.3,4.0) -- (\x+7.7,4.0);
+    \draw[gstyle] (\x+6.3,5.24) -- (\x+7.7,5.24);
+    \draw[gstyle] (\x+7.0,4.0) -- (\x+7.0,3.65);
+    \draw[gstyle] (\x+6.7,3.65) -- (\x+7.0,3.35) -- (\x+7.3,3.65) -- cycle;
+  }
+  % dots standing for buffers 3 ... N-1
+  \node[titlebuf] at (16.6,2.1) {$\cdots$};
+\end{circuitikz}%
+}
+  \caption{Example of a multi-buffer circuit implementing $H_\mathrm{m.b.}$.}
+  \label{fig_multibuffer_circuit}
+\end{figure*}
+
+\subsection{Parity-protected cat qubit}
+\label{subsec:parity_protected}
+Should the recommendation from this article be condensed in one sentence, this would likely be: if you seek for less chaos, remove as many harmonics in your Hamiltonian as you can. This is what we demonstrate here: we focus on the design presented on \TMD{Cite Antoine Marquet?} whose Hamiltonian reads
+\begin{equation}
+\begin{split}
+    H_\mathrm{p.p.} =\;&  \om_aa^\dagger a + \om_{b} b^\dagger b+\eps_d\cos(\omega_d t)(\hb+\hb\da)\\& -g\left[\cos\left(\hat \varphi_a\right)\sin\left(\hat\varphi_{b}\right)-\hat\varphi_{b}\right].
+\label{eq_ham_pp}
+\end{split}
+\end{equation}
+We call this the parity-protected version of our initial Hamiltonian \cref{eq_ham}: the sine coupling is replaced with this product of cosine and sine, such that, under the change $\hat a \to -\hat a$, $H_\mathrm{p.p.}$ stays the same, just as with $H^\mathrm{RWA}$.
+
+This Hamiltonian has also satellite, as shown on \cref{fig:phase_space_traj_parity_protected}, but they don't undergo any period doubling. Indeed, none of the Floquet multiplier never reaches $-1$ as shown on \cref{fig:floq_mult_parity_protected}.
+
+\begin{figure}[tbp]
+    \centering
+    % Row 1
+    \begin{subfigure}{0.45\columnwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chaos/figures_article/parity_protected_phase_space_traj_g2_100MHz_12_10_2026.png}
+        \caption{Phase-space limit cycles}
+        \label{fig:phase_space_traj_parity_protected}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\columnwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chaos/figures_article/floquet_multiplier_parity_protected_12_10_2026.pdf}
+        \caption{Real part of the Floquet multipliers}
+        \label{fig:floq_mult_parity_protected}
+    \end{subfigure}
+
+    \caption{Analysis of the parity protected cat qubit}
+\label{fig:parity_protected}
+\end{figure}
+
+A circuit that implements such parity-protected Hamiltonian is drawn on \cref{fig:app_circuit}: its mirrored architecture allows to keep parity symmetry safe. The buffer and the memory are not two separate elements, but the symmetric and antisymmetric modes of two identical ATS. The port couples to both ATS in the same way, so it drives and damps the buffer only, and the memory is dark to it. The derivation of the Hamiltonian is presented in \cref{app:parity_circuit}. 
+
+% Requires in the preamble: \usepackage{circuitikz} and the colors bufcol, cqcol, gcol.
+% \resizebox scales the whole drawing (lines, components, text) to the column width.
+\begin{figure}[tbp]
+  \centering
+\resizebox{\columnwidth}{!}{%
+\begin{circuitikz}[line cap=round,line join=round,
+  circuit_L/.style = {cute inductor, inductors/scale=1.5,
+    inductors/width=.5, inductors/coils=4, inductors/thickness=1},
+  external_coil/.style = {cute inductor, inductors/scale=1.5,
+    inductors/width=.7, inductors/coils=4, inductors/thickness=1}]
+  % ------------------------------------------------
+  % Global styles (fonts are scaled by \resizebox, ~0.45:
+  % 20pt -> ~9pt, 22pt -> ~10pt in the final column)
+  % ------------------------------------------------
+  \tikzset{
+    % both ATS drawn in the same neutral colour: neither is the buffer or
+    % the memory, which are their symmetric and antisymmetric modes
+    buffer/.style={draw=atscol, text=atscol, line width=1.6pt},
+    catq/.style={draw=atscol, text=atscol, line width=1.6pt},
+    gstyle/.style={draw=gcol, text=gcol, line width=1.6pt},
+    labbuf/.style={text=atscol, font=\fontsize{20}{20}\selectfont},
+    labcq/.style={text=atscol, font=\fontsize{20}{20}\selectfont},
+    titlebuf/.style={text=atscol, font=\fontsize{22}{22}\selectfont},
+    titlecq/.style={text=atscol, font=\fontsize{22}{22}\selectfont},
+    jjbuf/.style={draw=atscol, line width=2.6pt},
+    jjcq/.style={draw=atscol, line width=2.6pt},
+    ccoup/.style={line width=2.6pt}
+  }
+
+  % ================================================
+  % ATS 1 (+ capacitor), left block: x in [0, 5.2]
+  % ================================================
+  \draw[buffer] (0,0) -- (0,4.2) -- (5.2,4.2) -- (5.2,0) -- cycle;
+  \draw[buffer] (2.6,4.2) -- (2.6,4.62);
+  \draw[buffer] (0.875,4.62) -- (6.85,4.62);            % top wire
+  \draw[buffer] (3.45,4.2) to[C, -] ++(0,-4.2);          % capacitor
+  \draw[buffer] (1.75,0) to[circuit_L, -] ++(0,4.2);     % inductor
+  \draw[jjbuf] (-0.22,2.42) -- (0.22,1.88);  \draw[jjbuf] (-0.22,1.88) -- (0.22,2.42);
+  \draw[jjbuf] (4.98,2.42) -- (5.42,1.88);   \draw[jjbuf] (4.98,1.88) -- (5.42,2.42);
+  \draw[buffer] (2.6,0) -- (2.6,-0.35);
+  \draw[buffer] (2.30,-0.35) -- (2.60,-0.65) -- (2.90,-0.35) -- cycle;
+
+  % ================================================
+  % ATS 2: copy of ATS 1, x in [8.7, 13.9]
+  % ================================================
+  \draw[catq] (8.7,0) -- (8.7,4.2) -- (13.9,4.2) -- (13.9,0) -- cycle;
+  \draw[catq] (11.3,4.2) -- (11.3,4.62);
+  \draw[catq] (7.15,4.62) -- (13.3,4.62) -- (13.3,4.97); % top wire + stub to grey coupler
+  \draw[catq] (12.15,4.2) to[C, -] ++(0,-4.2);           % capacitor
+  \draw[catq] (10.45,0) to[circuit_L, -] ++(0,4.2);      % inductor
+  \draw[jjcq] (8.48,2.42) -- (8.92,1.88);    \draw[jjcq] (8.48,1.88) -- (8.92,2.42);
+  \draw[jjcq] (13.68,2.42) -- (14.12,1.88);  \draw[jjcq] (13.68,1.88) -- (14.12,2.42);
+  \draw[catq] (11.3,0) -- (11.3,-0.35);
+  \draw[catq] (11.0,-0.35) -- (11.3,-0.65) -- (11.6,-0.35) -- cycle;
+
+  % ================================================
+  % Coupling capacitors
+  % ================================================
+  % grey input line -- buffer
+  \draw[gstyle, ccoup] (0.575,4.62) -- ++(0,-0.28) -- ++(0,0.56);
+  \draw[buffer, ccoup] (0.875,4.62) -- ++(0,-0.28) -- ++(0,0.56);
+  % buffer -- memory
+  \draw[buffer, ccoup] (6.85,4.62) -- ++(0,-0.28) -- ++(0,0.56);
+  \draw[catq,   ccoup] (7.15,4.62) -- ++(0,-0.28) -- ++(0,0.56);
+  % shared grey port -- memory
+  \draw[catq,   ccoup] (13.3,4.97) -- ++(-0.28,0) -- ++(0.56,0);
+  \draw[gstyle, ccoup] (13.3,5.27) -- ++(-0.28,0) -- ++(0.56,0);
+
+  % ================================================
+  % Grey lines
+  % ================================================
+  % left input line (coax + ground)
+  \draw[gstyle] (0.575,4.62) -- (-1,4.62);
+  \draw[gstyle] (-1,4) -- (-2.4,4);
+  \draw[gstyle] (-1,5.24) -- (-2.4,5.24);
+  \draw[gstyle] (-1.7,4) -- (-1.7,3.65);
+  \draw[gstyle] (-2.0,3.65) -- (-1.7,3.35) -- (-1.4,3.65) -- cycle;
+  \draw[gstyle] (-1,4.62) ellipse (0.2 and 0.62);
+  % branch of the same port, running above the buffer to the memory coupler
+  \draw[gstyle] (-0.4,4.62) -- (-0.4,6.0) -- (13.3,6.0) -- (13.3,5.27);
+  \fill[gcol] (-0.4,4.62) circle (0.09);                % T-junction dot
+  % flux lines below the buffer
+  %M\draw[gstyle] (0.1,-2) -- (0.1,-0.5) to[external_coil, -] %(1.65,-0.5) -- (1.65,-2);
+  %\draw[gstyle] (3.6,-2) -- (3.6,-0.5) to[external_coil, -] %(5.15,-0.5) -- (5.15,-2);
+
+  % ================================================
+  % Titles and labels
+  % ================================================
+  \node[titlebuf] at (2.6,5.05)  {ATS 1};
+  \node[titlecq]  at (11.3,5.05) {ATS 2};
+  \node[labbuf]   at (-0.75,2.15) {$E_{J}$};
+  \node[labbuf]   at (5.95,2.15)  {$E_{J}$};
+  \node[labcq]    at (7.95,2.15)  {$E_{J}$};
+  \node[labcq]    at (14.65,2.15) {$E_{J}$};
+\end{circuitikz}%
+}
+  \caption{Parity-protected cat qubit. Two identical ATS are coupled to each other through $C_c$, and to the port symmetrically, through one capacitance $C_p$ each. The buffer is the symmetric mode and the memory the antisymmetric mode of the two ATS (\cref{app:parity_circuit}), so the memory is dark to the port.}
+  \label{fig:app_circuit}
+\end{figure}
+
+\section{Conclusion}
+In this paper we showcase a pipeline for the study of chaos in Floquet quantum systems: first go to the classical limits, compute the instability threshold with Hill method, characterize the onset of chaos with the maximal Lyapunov exponent and measure the OTOC in the quantum model. We applied this workflow on a cat qubit, namely the autoparametric dissipative cat qubit and show how such a system can be driven from a regular dynamics into a chaotic one. Finally we present three ways to mitigate this chaotic behavior: increasing the single photon loss rate, adding more loss channels, rethinking the circuit architecture to restore parity symmetry.
+
+\begin{acknowledgments}
+The authors thanks the ANRT for the fundings, the members of Quantic team (Inria) and of the simulation team (Alice \& Bob).
+
+\end{acknowledgments}
+
+\appendix
+\section{Parameters}
+\label{app:parameters}
+
+\begin{table}[h]
+    \centering
+    \caption{Parameters used in all simulations, unless stated otherwise.}
+    \label{tab:parameters}
+    \begin{tabular}{lll}
+        \toprule
+        Quantity & Symbol & Value \\
+        \midrule
+        Memory frequency & $\omega_a/2\pi$ & $4.033~\mathrm{GHz}$ \\
+        Buffer frequency & $\omega_b$ & $2\omega_a$ \\
+        Drive frequency & $\omega_d$ & $\omega_b$ \\
+        Pump frequency & $\omega_p=2\omega_a-\omega_d$ & $0$ (static flux) \\
+        Memory zero-point phase & $\varphi_a$ & $0.11$ \\
+        Buffer zero-point phase & $\varphi_b$ & $0.204$ \\
+        Josephson energy & $E_J/2\pi$ & $55.68~\mathrm{GHz}$ \\
+        Coupling rate & $g$ & $2E_J\sin\eps_p$ \\
+        Two-photon exchange rate & $g_2$ & $E_J\sin\eps_p\,\varphi_a^2\varphi_b$ \\
+         & $g_2/2\pi$ & $137.4~\mathrm{MHz}\times\sin\eps_p$ \\
+        Pump amplitude & $\eps_p$ & $0.2$ to $1.1$ \\
+         & $g_2/2\pi$ & $27.3$ to $122.5~\mathrm{MHz}$ \\
+        Drive amplitude & $\eps_d/g_2$ & $2$ to $13.5$ \\
+        Cat size & $|\alpha|^2=\eps_d/2g_2$ & $1$ to $6.75$ \\
+        Buffer loss rate & $\kappa_b/2\pi$ & $96.2~\mathrm{MHz}$ \\
+        Memory loss rate & $\kappa_a$ & $0$ \\
+        Quantum truncations (maps) & $n_a$, $n_b$ & $29$, $17$ (checks: $35$, $18$; $40$, $20$) \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{DC change of frame}
+\label{app:dc_frame}
+
+Consider a mode with a static drive and an arbitrary nonlinearity $f$,
+\begin{equation}
+    H = \omega_a\ha\da\ha + \eps(\ha+\ha\da) + f(\ha\da,\ha),
+\end{equation}
+with $\eps$ real. With the displaced operator $\ha_d=\ha+\eps/\omega_a$, $\omega_a\ha\da\ha+\eps(\ha+\ha\da)=\omega_a\ha_d\da\ha_d-\eps^2/\omega_a$, so that, up to a constant,
+\begin{equation}
+    H = \omega_a\ha_d\da\ha_d + f\bigl(\ha_d\da-\eps/\omega_a,\,\ha_d-\eps/\omega_a\bigr).
+\end{equation}
+The static drive is gone, and the nonlinearity is evaluated at the displaced point. When $f$ depends only on the junction phase $\hat x=\varphi_a(\ha+\ha\da)$, the displacement is a shift of the phase, $\hat x=\hat x_d-2\varphi_a\eps/\omega_a$.
+
+For \cref{eq_ham_0}, we write $-g\sin(\hat x+\varphi_d)=-g\bigl[\sin(\hat x+\varphi_d)-\hat x\bigr]-g\hat x$, with $\hat x=\hat\varphi_a+\hat\varphi_b$. The last term is a static drive on both modes, $\eps_a=-g\varphi_a$ and $\eps_b=-g\varphi_b$. Displacing both modes removes it and shifts the phase, $\hat x=\hat x_d+\delta$ with $\delta=2g(\varphi_a^2/\omega_a+\varphi_b^2/\omega_b)$. The nonlinearity becomes
+\begin{equation}
+    -g\bigl[\sin(\hat x_d+\delta+\varphi_d)-\hat x_d-\delta\bigr],
+\end{equation}
+which reduces to \cref{eq_ham}, up to a constant, for $\varphi_d=-\delta$ (\cref{eq_phi_d}). The buffer drive $\eps_d\cos(\omega_dt)(\hb+\hb\da)$ only acquires a $c$-number term, which does not affect the dynamics.
+
+With buffer loss, the dissipator $\kappa_b\mathcal D[\hb]$ also produces a linear term in the displaced frame. It is cancelled by displacing the buffer to the steady state of the damped linear mode, $\hb=\hb_d-\eps_b/(\omega_b-i\kappa_b/2)$. Only the real part of the displacement enters $\hat x$, so $\varphi_d$ changes by a relative amount $\kappa_b^2/4\omega_b^2\simeq4\times10^{-5}$, which we neglect.
+
+\section{Derivation of the classical equations of motion}
+\label{app:derivation_classical_equation}
+
+In this Appendix, we derive \cref{eq_classical_dynamics} from the GKSL equation
+\begin{equation}
+    \dot{\hat\rho} = -i[H,\hat\rho] + \kappa_b\mathcal{D}[\hb]\hat\rho ,
+    \label{eq_app_GKSL}
+\end{equation}
+with $H$ given by \cref{eq_ham}. The expectation value of any operator $\hat O$ then evolves according to
+\begin{equation}
+    \frac{d\langle\hat O\rangle}{dt} = i\langle[H,\hat O]\rangle
+    + \frac{\kappa_b}{2}\bigl\langle \hb\da[\hat O,\hb] + [\hb\da,\hat O]\,\hb\bigr\rangle .
+    \label{eq_app_heisenberg}
+\end{equation}
+
+\paragraph*{Commutators.}
+We write $\hat x\equiv\hat\varphi_a+\hat\varphi_b$, with $\hat\varphi_a=\varphi_a(\ha+\ha\da)$ and $\hat\varphi_b=\varphi_b(\hb+\hb\da)$. Since $[\ha,\hat x]=\varphi_a$, we have $[\ha,f(\hat x)]=\varphi_a f'(\hat x)$ for any function $f$ given by a power series, and similarly for $\hb$. The nonlinearity $-g[\sin\hat x-\hat x]$ therefore gives
+\begin{equation}
+\begin{aligned}
+    [H,\ha] &= -\omega_a\ha + g\varphi_a\bigl(\cos\hat x-1\bigr),\\
+    [H,\hb] &= -\omega_b\hb - \eps_d\cos(\omega_d t) + g\varphi_b\bigl(\cos\hat x-1\bigr).
+\end{aligned}
+\end{equation}
+In the dissipator, $[\ha,\hb]=[\hb\da,\ha]=0$ for $\hat O=\ha$, and $[\hb,\hb]=0$, $[\hb\da,\hb]=-1$ for $\hat O=\hb$.
+
+\paragraph*{Ehrenfest equations.}
+Inserting these into \cref{eq_app_heisenberg} gives the exact equations
+\begin{equation}
+\begin{cases}
+    \dfrac{d\langle\ha\rangle}{dt} = -i\omega_a\langle\ha\rangle+ig\varphi_a\bigl(\langle\cos\hat x\rangle-1\bigr),\\[2mm]
+    \dfrac{d\langle\hb\rangle}{dt} = -\Bigl(i\omega_b+\dfrac{\kappa_b}{2}\Bigr)\langle\hb\rangle-i\eps_d\cos(\omega_d t)\\
+    \hspace{18mm}+ig\varphi_b\bigl(\langle\cos\hat x\rangle-1\bigr),
+\end{cases}
+\label{eq_app_mu}
+\end{equation}
+where the $-1$ comes from the linear term $g\hat x$ of $H$. They are not closed, because $\langle\cos\hat x\rangle$ involves all the moments of $\hat x$.
+
+\paragraph*{Mean-field closure.}
+For a Gaussian state, $\langle e^{i\hat x}\rangle=e^{i\langle\hat x\rangle-K}$ with $K=\mathrm{Var}(\hat x)/2$, so that $\langle\cos\hat x\rangle=e^{-K}\cos\langle\hat x\rangle$. The mean-field approximation neglects the fluctuations of the junction phase, $\langle\hat x^n\rangle=\langle\hat x\rangle^n$, i.e.\ $K\to0$ and $\langle\cos\hat x\rangle\to\cos\langle\hat x\rangle$. With $a\equiv\langle\ha\rangle$ and $b\equiv\langle\hb\rangle$, \cref{eq_app_mu} then reduce to \cref{eq_classical_dynamics}, with $X=\langle\hat x\rangle=\varphi_a(a+a^*)+\varphi_b(b+b^*)$.
+
+For a coherent state, $\mathrm{Var}(\hat x)=\varphi_a^2+\varphi_b^2$. The first quantum correction to the classical equations therefore renormalizes the cosine term by $e^{-(\varphi_a^2+\varphi_b^2)/2}\simeq0.97$ for our parameters.
+
+% Former derivation through the Husimi Q-function, kept for reference.
+\iffalse
+
+In this Appendix, we derive \cref{eq_classical_dynamics} from the GKSL equation
+\begin{equation}
+    \dot{\hat\rho} = -i[H,\hat\rho] + \kappa_b\mathcal{D}[\hb]\hat\rho .
+    \label{eq_app_GKSL}
+\end{equation}
+We write $\hat x\equiv\hat\varphi_a+\hat\varphi_b$, with $\hat\varphi_a=\varphi_a(\ha+\ha\da)$ and $\hat\varphi_b=\varphi_b(\hb+\hb\da)$. The Hamiltonian splits into a linear and a nonlinear part, $H=H_l+H_{nl}$, with
+\begin{align}
+    H_l &= \omega_a\ha\da\ha+\omega_b\hb\da\hb+g\,\hat x \nonumber\\
+        &\quad +\eps_d\cos(\omega_d t)(\hb+\hb\da),\\
+    H_{nl} &= -g\sin\hat x .
+\end{align}
+
+\subsection{Husimi function and correspondence rules}
+We work with the two-mode Husimi function
+\begin{equation}
+    Q(\alpha,\beta)=\frac{1}{\pi^2}\bra{\alpha,\beta}\hat\rho\ket{\alpha,\beta},
+\end{equation}
+treating $\alpha,\alpha^*,\beta,\beta^*$ as independent variables. Its moments are anti-normally ordered expectation values, $\int d^2\alpha\,d^2\beta\;\alpha^m(\alpha^*)^n Q=\langle\ha^m(\ha\da)^n\rangle$. Products of $\hat\rho$ with mode operators translate into differential operators acting on $Q$ \TMD{Add citation}:
+\begin{equation}
+\begin{aligned}
+    \ha\hat\rho &\mapsto (\alpha+\partial_{\alpha^*})Q, &\quad \hat\rho\ha\da &\mapsto (\alpha^*+\partial_\alpha)Q,\\
+    \ha\da\hat\rho &\mapsto \alpha^*Q, &\quad \hat\rho\ha &\mapsto \alpha Q,
+\end{aligned}
+\label{eq_app_rules}
+\end{equation}
+and similarly for $\hb$ with $\beta$. Successive left multiplications compose in order, $\hat O_1\hat O_2\hat\rho\mapsto O_1^{L}O_2^{L}Q$, and right multiplications in reverse order. Below, $\partial_\alpha(AQ)+\text{c.c.}$ is shorthand for $\partial_\alpha(AQ)+\partial_{\alpha^*}(A^*Q)$.
+
+\subsection{Linear part}
+For a single mode with $H=\omega\ha\da\ha+F(t)(\ha+\ha\da)$, $F$ real, \cref{eq_app_rules} gives
+\begin{align}
+    -i[\omega\ha\da\ha,\hat\rho] &\mapsto -i\omega\bigl[\alpha^*\partial_{\alpha^*}-\alpha\partial_\alpha\bigr]Q \nonumber\\
+    &\;= \partial_\alpha(i\omega\alpha Q)+\text{c.c.},\\
+    -iF[\ha+\ha\da,\hat\rho] &\mapsto -iF\bigl(\partial_{\alpha^*}-\partial_\alpha\bigr)Q \nonumber\\
+    &\;= \partial_\alpha(iFQ)+\text{c.c.}
+\end{align}
+For the dissipator, the three terms of $\mathcal{D}[\hb]\hat\rho$ map onto $(\beta+\partial_{\beta^*})(\beta^*+\partial_\beta)Q$, $-\tfrac12\beta^*(\beta+\partial_{\beta^*})Q$ and $-\tfrac12\beta(\beta^*+\partial_\beta)Q$, which sum to
+\begin{equation}
+    \kappa_b\mathcal{D}[\hb]\hat\rho \mapsto \partial_\beta\Bigl(\frac{\kappa_b}{2}\beta Q\Bigr)+\text{c.c.}+\kappa_b\partial_\beta\partial_{\beta^*}Q .
+\end{equation}
+Collecting all terms, the linear part of the dynamics reads
+\begin{equation}
+    \dot Q\big|_l=\partial_\alpha(A^\alpha Q)+\partial_\beta(A^\beta Q)+\text{c.c.}+\kappa_b\partial_\beta\partial_{\beta^*}Q,
+    \label{eq_app_Q_linear}
+\end{equation}
+with the drift coefficients
+\begin{align}
+    A^\alpha &= i\omega_a\alpha+ig\varphi_a,\\
+    A^\beta &= \Bigl(i\omega_b+\frac{\kappa_b}{2}\Bigr)\beta+i\eps_d\cos(\omega_d t)+ig\varphi_b .
+\end{align}
+
+\subsection{Nonlinear part}
+Since left (right) multiplications compose in (reverse) order, the rules \eqref{eq_app_rules} extend term by term to any power series $f$ of $\hat x$:
+\begin{equation}
+    f(\hat x)\hat\rho\mapsto f(D_L)Q,\qquad \hat\rho f(\hat x)\mapsto f(D_R)Q,
+\end{equation}
+with the first-order differential operators
+\begin{align}
+    D_L &= \varphi_a(\alpha+\alpha^*+\partial_{\alpha^*})+\varphi_b(\beta+\beta^*+\partial_{\beta^*}),\\
+    D_R &= \varphi_a(\alpha+\alpha^*+\partial_{\alpha})+\varphi_b(\beta+\beta^*+\partial_{\beta}).
+\end{align}
+Hence $-i[H_{nl},\hat\rho]\mapsto ig\,[\sin D_L-\sin D_R]\,Q$, and the full equation for the Husimi function is
+\begin{equation}
+\begin{split}
+    \dot Q =\;& \partial_\alpha(A^\alpha Q)+\partial_\beta(A^\beta Q)+\text{c.c.}\\
+    &+\kappa_b\partial_\beta\partial_{\beta^*}Q
+    +ig\,[\sin D_L-\sin D_R]\,Q .
+\end{split}
+\label{eq_app_Q_full}
+\end{equation}
+
+Although not needed below, the action of $D_{L}$ can be made explicit. Writing $\partial_{\alpha^*}+\alpha+\alpha^*=e^{-h}\partial_{\alpha^*}e^{h}$ with $h=\alpha\alpha^*+(\alpha^*)^2/2$, and similarly for $\beta$, the exponential $e^{iD_L}$ reduces to a translation of $\alpha^*$ and $\beta^*$:
+\begin{equation}
+\begin{split}
+    e^{iD_L}Q(\alpha,\alpha^*,\beta,\beta^*) =\;& e^{iX-(\varphi_a^2+\varphi_b^2)/2}\\
+    &\times Q(\alpha,\alpha^*+i\varphi_a,\beta,\beta^*+i\varphi_b),
+\end{split}
+\end{equation}
+with $X=\varphi_a(\alpha+\alpha^*)+\varphi_b(\beta+\beta^*)$, and $e^{iD_R}Q$ is obtained by exchanging the roles of $\alpha$ and $\alpha^*$ (resp.\ $\beta$ and $\beta^*$). The nonlinearity thus couples $Q$ at points separated by $\pm i\varphi_{a,b}$: \cref{eq_app_Q_full} is nonlocal and reduces to a Fokker--Planck equation only after truncation at small $\varphi_{a,b}$.
+
+\subsection{Equations for the means}
+We define $\mu_a=\int d^2\alpha\,d^2\beta\;\alpha Q=\langle\ha\rangle$ and $\mu_b=\langle\hb\rangle$. Integrating \cref{eq_app_Q_linear} by parts, $\int\alpha\,\partial_\alpha(A^\alpha Q)=-\langle A^\alpha\rangle$, while the other linear terms do not contribute to $\dot\mu_a$. For the nonlinear term, we use $\alpha f(D_L)Q=\pi^{-2}\bra{\alpha,\beta}f(\hat x)\hat\rho\,\ha\ket{\alpha,\beta}$, $\alpha f(D_R)Q=\pi^{-2}\bra{\alpha,\beta}\hat\rho f(\hat x)\ha\ket{\alpha,\beta}$, and the completeness relation $\int d^2\alpha\,d^2\beta\,\ket{\alpha,\beta}\bra{\alpha,\beta}=\pi^2$:
+\begin{equation}
+\begin{split}
+    \int d^2\alpha\,d^2\beta\;\alpha\,[f(D_L)-f(D_R)]\,Q
+    &=\langle[\ha,f(\hat x)]\rangle\\
+    &=\varphi_a\langle f'(\hat x)\rangle .
+\end{split}
+\end{equation}
+With $f=\sin$, we obtain the exact (Ehrenfest) equations
+\begin{equation}
+\begin{cases}
+    \dot\mu_a &= -i\omega_a\mu_a+ig\varphi_a\bigl(\langle\cos\hat x\rangle-1\bigr),\\
+    \dot\mu_b &= -\Bigl(i\omega_b+\frac{\kappa_b}{2}\Bigr)\mu_b-i\eps_d\cos(\omega_d t)\nonumber\\
+    &\quad+ig\varphi_b\bigl(\langle\cos\hat x\rangle-1\bigr),
+\end{cases}
+\label{eq_app_mu}
+\end{equation}
+where the $-1$ comes from the linear term $g\hat x$ in $H_l$.
+
+To close these equations, we assume a Gaussian state, characterized by the second central moments of $Q$,
+\begin{equation}
+\begin{aligned}
+    \sigma_a^2&=\langle|\delta\alpha|^2\rangle, & \tilde\sigma_a^2&=\langle\delta\alpha^2\rangle, & c&=\langle\delta\alpha\,\delta\beta\rangle,\\
+    \sigma_b^2&=\langle|\delta\beta|^2\rangle, & \tilde\sigma_b^2&=\langle\delta\beta^2\rangle, & d&=\langle\delta\alpha\,\delta\beta^*\rangle,
+\end{aligned}
+\end{equation}
+with $\delta\alpha=\alpha-\mu_a$, $\delta\beta=\beta-\mu_b$. For a Gaussian state $\langle e^{i\hat x}\rangle=e^{i\bar X-K}$, with $\bar X=\langle\hat x\rangle=\varphi_a(\mu_a+\mu_a^*)+\varphi_b(\mu_b+\mu_b^*)$ and $K=\mathrm{Var}(\hat x)/2$. Because the moments of $Q$ are anti-normally ordered, $\mathrm{Var}(\ha+\ha\da)=2(\sigma_a^2+\mathrm{Re}\,\tilde\sigma_a^2)-1$, so that
+\begin{equation}
+\begin{split}
+    K =\;& \varphi_a^2\Bigl(\sigma_a^2+\mathrm{Re}\,\tilde\sigma_a^2-\tfrac12\Bigr)
+         +\varphi_b^2\Bigl(\sigma_b^2+\mathrm{Re}\,\tilde\sigma_b^2-\tfrac12\Bigr)\\
+         &+2\varphi_a\varphi_b\,\mathrm{Re}(c+d),
+\end{split}
+\end{equation}
+and $\langle\cos\hat x\rangle=e^{-K}\cos\bar X$.
+
+The classical limit consists in neglecting the fluctuations of $\hat x$, $K\to0$, i.e.\ $\langle\cos\hat x\rangle\to\cos\bar X$. In terms of the moments of $Q$, this corresponds to an isotropic Gaussian with $\sigma_a^2=\sigma_b^2=1/2$ and $\tilde\sigma_a^2=\tilde\sigma_b^2=c=d=0$. Identifying $a\equiv\mu_a$ and $b\equiv\mu_b$, \cref{eq_app_mu} then reduce exactly to \cref{eq_classical_dynamics}. Note that a coherent state has $\sigma_{a,b}^2=1$, hence $K=(\varphi_a^2+\varphi_b^2)/2$: the first quantum correction renormalizes the cosine term by $e^{-(\varphi_a^2+\varphi_b^2)/2}$.
+\fi
+
+\section{Analytical derivation of the harmonic balance}
+\label{app:derivation_harmonic_balance}
+
+\paragraph*{Equations of motion.}
+We consider the classical dynamics generated by
+\begin{equation}
+\begin{split}
+    H(t) = {}& \omega_a |a|^2 + \omega_b |b|^2
+    - 2E_J\sin\varepsilon_p\bigl[\sin\hat X - \hat X\bigr]\\
+    &+ \varepsilon_d\cos(\omega_d t)\,(b+b^*),\\
+    \hat X = {}& \varphi_a(a+a^*) + \varphi_b(b+b^*),
+\end{split}
+\label{eq:app_H}
+\end{equation}
+with $\dot a = -i\,\partial H/\partial a^*$ and $\dot b = -i\,\partial H/\partial b^* - (\kappa_b/2) b$, as in \cref{eq_classical_dynamics}.
+We take $\omega_d=\omega_b=2\omega_a$. We rescale the fields, $\varphi_a a\to a$ and $\varphi_b b\to b$, use the dimensionless time $\tau=\omega_a t$, and move to the frame rotating at the mode frequencies, $a\to a\,e^{i\tau}$, $b\to b\,e^{2i\tau}$. With
+\begin{equation}
+\begin{aligned}
+    \beta_a' &= \frac{2E_J\sin\varepsilon_p\,\varphi_a^2}{\omega_a},&\qquad
+    \beta_b' &= \frac{2E_J\sin\varepsilon_p\,\varphi_b^2}{\omega_b},\\
+    \varepsilon_d' &= \frac{\varepsilon_d\varphi_b}{\omega_b},&\qquad
+    \kappa_b' &= \frac{\kappa_b}{2\omega_b},
+\end{aligned}
+\end{equation}
+the equations of motion read
+\begin{equation}
+\begin{split}
+    \frac{da}{d\tau} &= i\beta_a'\,e^{i\tau}\bigl[\cos X - 1\bigr],\\
+    \frac{db}{d\tau} &= 2i\beta_b'\,e^{2i\tau}\bigl[\cos X - 1\bigr]\\
+    &\quad - i\varepsilon_d'\bigl(1+e^{4i\tau}\bigr) - 2\kappa_b' b,\\
+    X(\tau) &= a\,e^{-i\tau} + b\,e^{-2i\tau} + \text{c.c.},
+\end{split}
+\label{eq:app_eom}
+\end{equation}
+where $X$ is the phase across the junction.
+
+\paragraph*{Harmonic balance.}
+We look for periodic solutions by inserting a finite Fourier Ansatz for $a(\tau)$ and $b(\tau)$ into \cref{eq:app_eom} and equating the Fourier components retained in the Ansatz. For any Ansatz, the junction phase takes the form
+\begin{equation}
+    X(\tau) = C + \sum_{j\ge1}\bigl(h_j e^{-ij\tau} + h_j^* e^{ij\tau}\bigr),
+\end{equation}
+with $C\in\mathbb R$ and $h_j = |h_j|e^{i\phi_j}$.
+Using the Jacobi--Anger expansion $e^{iz\cos\vartheta}=\sum_{k} i^k J_k(z)e^{ik\vartheta}$ for each harmonic, one finds $\cos X=\sum_{N\in\mathbb Z}F_N e^{iN\tau}$ with
+\begin{equation}
+\begin{split}
+    F_N = \sum_{\substack{\{k_j\}\in\mathbb Z\\ \sum_j j k_j = N}}
+    &\Bigl[\prod_j J_{k_j}\bigl(2|h_j|\bigr)e^{-ik_j\phi_j}\Bigr]\\
+    &\times\cos\Bigl(C + \frac{\pi}{2}\sum_j k_j\Bigr).
+\end{split}
+\label{eq:app_FN}
+\end{equation}
+Two properties will be used repeatedly. First, if the harmonics are phase locked as $h_j = r_j e^{ij\theta}$ with $r_j\in\mathbb R$ (signed), then $e^{-ik_j\phi_j}J_{k_j}(2|h_j|)=e^{-ijk_j\theta}J_{k_j}(2r_j)$ (if $r_j<0$, then $\phi_j=j\theta+\pi$ and we use $(-1)^kJ_k(z)=J_k(-z)$). The constraint $\sum_j jk_j=N$ then factors out the phase, $F_N = e^{-iN\theta}R_N$, with
+\begin{equation}
+    R_N = \sum_{\substack{\{k_j\}\in\mathbb Z\\ \sum_j j k_j = N}}
+    \Bigl[\prod_j J_{k_j}(2r_j)\Bigr]
+    \cos\Bigl(C + \frac{\pi}{2}\sum_j k_j\Bigr)\in\mathbb R .
+    \label{eq:app_RN_general}
+\end{equation} Second, at lowest order in the phase, $\cos X-1\simeq -X^2/2$, so that
+\begin{equation}
+    F_N \simeq \delta_{N,0} - \tfrac12\bigl(X^2\bigr)_N,
+    \label{eq:app_FN_quad}
+\end{equation}
+where $(X^2)_N$ is the $e^{iN\tau}$ component of $X^2$.
+
+\subsection{Cat states}
+\label{app:cat}
+\subsubsection{Derivation}
+\label{app:cat_derivation}
+
+The cat states are fixed points in the rotating frame, $a=a_0=|a_0|e^{i\theta_{a_0}}$ and $b=b_0$. Then $C=0$, $h_1=a_0$, $h_2=b_0$, and we keep only the constant component of \cref{eq:app_eom}, which selects $F_{-1}$ for the memory and $F_{-2}$ for the buffer:
+\begin{equation}
+\begin{cases}
+    0 = F_{-1},\\
+    0 = 2i\beta_b' F_{-2} - i\varepsilon_d' - 2\kappa_b' b_0,
+\end{cases}
+\end{equation}
+with
+\begin{equation}
+\begin{split}
+    F_N = \sum_{m\in\mathbb Z} &J_{N-2m}\bigl(2|a_0|\bigr)J_m\bigl(2|b_0|\bigr)\\
+    &\times e^{-i(N-2m)\theta_{a_0}-im\theta_{b_0}}\cos\Bigl[\frac{(N-m)\pi}{2}\Bigr].
+\end{split}
+\end{equation}
+We look for solutions with an empty buffer, $b_0=0$, so that only $m=0$ contributes. The memory equation is then satisfied identically, since $F_{-1}\propto\cos(-\pi/2)=0$, and $F_{-2}=-J_2(2|a_0|)e^{2i\theta_{a_0}}$. The buffer equation becomes
+\begin{equation}
+    J_2\bigl(2|a_0|\bigr)\,e^{2i\theta_{a_0}} = -\frac{\varepsilon_d'}{2\beta_b'}.
+    \label{eq:app_cat_bessel}
+\end{equation}
+For $\varepsilon_d'>0$ this fixes $\theta_{a_0}=\pm\pi/2$ and $J_2(2|a_0|)=\varepsilon_d'/(2\beta_b')$, which has solutions only if $\varepsilon_d'/(2\beta_b')\le\max_z J_2(z)\simeq0.49$. Using $J_2(2x)=x^2/2-x^4/6+O(x^6)$, the lowest order gives the two cat states
+\begin{equation}
+\begin{split}
+    &a_0 = \pm i\sqrt{\varepsilon_d'/\beta_b'},
+    \quad\text{i.e.}\quad
+    |\alpha|^2 = \frac{|a_0|^2}{\varphi_a^2} = \frac{\varepsilon_d}{2g_2},\\
+    &g_2 = E_J\sin\varepsilon_p\,\varphi_a^2\varphi_b ,
+\end{split}
+\label{eq:app_cat}
+\end{equation}
+in the original units, and the next order gives $|a_0|^2=\tfrac32\bigl[1-\sqrt{1-4\varepsilon_d'/(3\beta_b')}\bigr]$.
+
+\subsubsection{Equivalent Hamiltonian}
+\label{app:cat_hamiltonian}
+
+Expanding \cref{eq:app_H} to third order in $\hat X$ gives $-2E_J\sin\varepsilon_p[\sin\hat X-\hat X]\simeq (E_J\sin\varepsilon_p/3)\hat X^3$. For $\omega_b=2\omega_a$, the only term of $\hat X^3$ that is resonant in the rotating frame is $g_2(a^2b^*+\text{c.c.})$, which yields the two-photon Hamiltonian
+\begin{equation}
+\begin{split}
+    H_\text{2ph} = {}& \omega_a|a|^2 + \omega_b|b|^2 + \varepsilon_d\cos(\omega_d t)(b+b^*)\\
+    &+ g_2\bigl(a^2 b^* + a^{*2} b\bigr).
+\end{split}
+\end{equation}
+With the same rescaling as above and after dropping the counter-rotating drive term $e^{4i\tau}$, its equations of motion read
+\begin{equation}
+\begin{cases}
+    \dfrac{da}{d\tau} = -i\beta_a'\, a^* b,\\[2mm]
+    \dfrac{db}{d\tau} = -i\beta_b'\, a^2 - i\varepsilon_d' - 2\kappa_b' b.
+\end{cases}
+\end{equation}
+The fixed points satisfy $a_0^*b_0=0$ and $\beta_b'a_0^2+\varepsilon_d'-2i\kappa_b'b_0=0$, so that $b_0=0$ and $a_0^2=-\varepsilon_d'/\beta_b'$. This is exactly \cref{eq:app_cat}. In fact, since $J_2(2|a_0|)e^{2i\theta_{a_0}}=a_0^2/2+O(|a_0|^4)$, \cref{eq:app_cat_bessel} is the full-cosine version of the two-photon fixed-point condition: $H_\text{2ph}$ reproduces the cat states at leading order in the junction phase.
+
+% =====================================================================
+\subsection{Satellites}
+\label{app:satellites}
+
+\subsubsection{Derivation}
+\label{app:sat_derivation}
+
+\paragraph*{Ansatz.}
+The satellites are periodic orbits of \cref{eq:app_eom} with period $2\pi$ (i.e.\ $2\pi/\omega_a$). We use
+\begin{equation}
+\begin{cases}
+    a(\tau) = a_0 + a_1 e^{i\tau} + a_{-1}e^{-i\tau},\\
+    b(\tau) = b_0 + b_{-1}e^{-i\tau} + b_2 e^{2i\tau}.
+\end{cases}
+\label{eq:app_sat_ansatz}
+\end{equation}
+In the laboratory frame:
+\begin{itemize}
+    \item $a_0$ and $b_0$ oscillate at $\omega_a$ and $\omega_b=2\omega_a$;
+    \item $a_1$ and $b_2$ are static displacements;
+    \item $a_{-1}$ is a memory component at $2\omega_a$;
+    \item $b_{-1}$ is a buffer component at $3\omega_a$.
+\end{itemize}
+
+This choice follows from the nonlinearity. Through the quadratic term of $\cos X-1$, the leading harmonics $a_0$ and $b_0$ generate the frequencies $0,\omega_a,2\omega_a,3\omega_a,4\omega_a$. We keep the components detuned by at most $\omega_a$ from the mode frequencies, namely the static memory displacement, $a_{-1}$ and $b_{-1}$. We also keep the static buffer displacement $b_2$, which is driven by the same Fourier component $F_0$ as $a_1$ and contributes to the static junction phase.
+
+The buffer component at $\omega_a$ is as close to resonance as these, but it is driven by $F_{-1}$, which vanishes on any solution (see below). An Ansatz containing it therefore returns a vanishing amplitude and misses the components above.
+
+With \cref{eq:app_sat_ansatz}, the junction phase is
+\begin{equation}
+\begin{split}
+    X(\tau) &= C + \bigl(a_0e^{-i\tau} + Y e^{-2i\tau} + b_{-1}e^{-3i\tau} + \text{c.c.}\bigr),\\
+    C &= 2\,\mathrm{Re}(a_1+b_2),\qquad Y = b_0 + a_{-1}.
+\end{split}
+\end{equation}
+The memory and buffer components at $2\omega_a$ add up in $X$, so that $h_1=a_0$, $h_2=Y$, $h_3=b_{-1}$, and \cref{eq:app_FN} becomes
+\begin{equation}
+\begin{split}
+    F_N = \sum_{\substack{n,m,p\in\mathbb Z\\ n+2m+3p=N}}
+    &J_n\bigl(2|a_0|\bigr)J_m\bigl(2|Y|\bigr)J_p\bigl(2|b_{-1}|\bigr)\\
+    &\times e^{-i(n\theta_{a_0}+m\theta_{Y}+p\theta_{b_{-1}})}\\
+    &\times\cos\Bigl[C+\frac{(n+m+p)\pi}{2}\Bigr].
+\end{split}
+\end{equation}
+
+\paragraph*{Harmonic balance.}
+We equate the components $e^{0}$, $e^{i\tau}$ and $e^{-i\tau}$ of the memory equation, and $e^{0}$, $e^{-i\tau}$ and $e^{2i\tau}$ of the buffer equation:
+\begin{equation}
+\begin{cases}
+    0 = F_{-1},\\
+    a_1 = \beta_a'\bigl(F_0-1\bigr),\\
+    a_{-1} = -\beta_a' F_{-2},\\
+    0 = 2i\beta_b'F_{-2} - i\varepsilon_d' - 2\kappa_b' b_0,\\
+    \bigl(\kappa_b' - \tfrac{i}{2}\bigr)\,b_{-1} = i\beta_b' F_{-3},\\
+    \bigl(1-i\kappa_b'\bigr)\,b_2 = \beta_b'\bigl(F_0-1\bigr).
+\end{cases}
+\label{eq:app_sat_hb}
+\end{equation}
+
+Three consequences follow directly.
+\begin{itemize}
+    \item Since $X$ is real, $F_0$ is real, and therefore $a_1\in\mathbb R$.
+    \item The static components are slaved to each other, $b_2=\beta_b' a_1/[\beta_a'(1-i\kappa_b')]$, which gives
+    \begin{equation}
+        C = 2\gamma\,a_1,\qquad \gamma = 1+\frac{\beta_b'}{\beta_a'(1+\kappa_b'^2)} .
+    \end{equation}
+    \item The third and fourth lines of \cref{eq:app_sat_hb} share $F_{-2}$, so the drive fixes the memory component at $2\omega_a$ exactly, independently of how the cosine is truncated:
+    \begin{equation}
+        a_{-1} = -\frac{\beta_a'}{2\beta_b'}\bigl(\varepsilon_d' - 2i\kappa_b' b_0\bigr).
+        \label{eq:app_am1}
+    \end{equation}
+\end{itemize}
+
+\paragraph*{Phase reduction.}
+We now use $\kappa_b'\ll1$. We set $\kappa_b'\to0$ in the last two lines of \cref{eq:app_sat_hb}, where it only gives $O(\kappa_b')$ corrections, and keep it in the drive equation, where it competes with $\varepsilon_d'$. We then look for phase-locked solutions
+\begin{equation}
+\begin{aligned}
+    a_0 &= x\,e^{i\theta},&\qquad b_0 &= y\,e^{2i\theta},\\
+    a_{-1} &= z\,e^{2i\theta},&\qquad b_{-1} &= w\,e^{3i\theta},
+\end{aligned}
+\end{equation}
+with $x,y,z,w\in\mathbb R$,
+so that $Y=(y+z)\,e^{2i\theta}\equiv \bar y\,e^{2i\theta}$. Signed amplitudes also cover relative phases shifted by $\pi$, which are then decided by the equations rather than fixed by hand.
+
+With $F_N=e^{-iN\theta}R_N$, every equation becomes real except the drive equation, whose real and imaginary parts fix $\theta$:
+\begin{equation}
+\begin{cases}
+    R_{-1} = 0,\\
+    a_1 = \beta_a'\bigl(R_0-1\bigr),\\
+    z = -\beta_a' R_{-2},\\
+    2\beta_b' R_{-2} = \varepsilon_d'\cos2\theta,\\
+    \varepsilon_d'\sin2\theta = -2\kappa_b' y,\\
+    w = -2\beta_b' R_{-3},
+\end{cases}
+\label{eq:app_sat_bessel}
+\end{equation}
+with
+\begin{equation}
+\begin{split}
+    R_N = \sum_{m,p\in\mathbb Z} &J_{N-2m-3p}(2x)\,J_m(2\bar y)\,J_p(2w)\\
+    &\times\cos\Bigl[2\gamma a_1 + \frac{(N-m-2p)\pi}{2}\Bigr].
+\end{split}
+\label{eq:app_RN}
+\end{equation}
+
+Eliminating $\theta$ gives $2\beta_b'R_{-2}=\sigma\,\varepsilon_\text{eff}(y)$, with $\varepsilon_\text{eff}(y)=\sqrt{\varepsilon_d'^2-4\kappa_b'^2y^2}$ and $\sigma=\mathrm{sign}(\cos2\theta)$. This requires $2\kappa_b'|y|\le\varepsilon_d'$, and it gives
+\begin{equation}
+    z = -\sigma\,\frac{\beta_a'}{2\beta_b'}\,\varepsilon_\text{eff}(y),
+    \qquad y = \bar y - z .
+    \label{eq:app_z}
+\end{equation}
+
+The two signs correspond to two families of periodic orbits:
+\begin{itemize}
+    \item $\sigma=-1$, $\theta\simeq\pm\pi/2$: the cat states. Setting $a_{\pm1}=b_2=b_{-1}=0$ recovers \cref{app:cat_derivation}.
+    \item $\sigma=+1$, $\theta\simeq0,\pi$: the satellites. They are rotated by $90^\circ$ with respect to the cats, up to the dissipative tilt $\theta_{b_0}=2\theta=-\arcsin(2\kappa_b' y/\varepsilon_d')$, with $\theta_{a_0}=\theta_{b_0}/2 \ [\pi]$.
+\end{itemize}
+\Cref{eq:app_sat_bessel} is invariant under $(x,w)\to(-x,-w)$, i.e.\ under $a\to-a$, so the satellites come in pairs related by the parity of the memory.
+
+\paragraph*{Leading-order solution.}
+At lowest order in the junction phase, \cref{eq:app_FN_quad} gives
+\begin{equation}
+\begin{split}
+    R_{-1}&\simeq -x(C+\bar y)-\bar y w,\\
+    R_0-1&\simeq -\Bigl(\frac{C^2}{2}+x^2+\bar y^2+w^2\Bigr),\\
+    R_{-2}&\simeq -\Bigl(C\bar y+\frac{x^2}{2}+xw\Bigr),\\
+    R_{-3}&\simeq -(Cw+x\bar y).
+\end{split}
+\end{equation}
+For $\kappa_b'\to0$ in $\gamma$, we have $\gamma\beta_a'=\beta_a'+\beta_b'\equiv\beta_\Sigma$, and \cref{eq:app_sat_bessel} becomes the polynomial system
+\begin{equation}
+\begin{cases}
+    x\,(C+\bar y) + \bar y\,w = 0,\\
+    C = -2\beta_\Sigma\Bigl(\dfrac{C^2}{2}+x^2+\bar y^2+w^2\Bigr),\\
+    -2\beta_b'\Bigl(C\bar y+\dfrac{x^2}{2}+xw\Bigr) = \sigma\,\varepsilon_\text{eff}(y),\\
+    w = 2\beta_b'\,(Cw+x\bar y),
+\end{cases}
+\label{eq:app_sat_poly}
+\end{equation}
+completed by \cref{eq:app_z}.
+
+For $x\neq0$, let $u=w/x$ and $\eta=2\beta_b'\bar y$. The first and last lines give $C=-\bar y(1+u)$ and $\eta u^2+(1+\eta)u-\eta=0$, whose root continuously connected to $u=0$ is
+\begin{equation}
+    u(\bar y) = \frac{\sqrt{(1+\eta)^2+4\eta^2}-(1+\eta)}{2\eta} = \eta + O(\eta^2).
+\end{equation}
+The third line with $\sigma=+1$ then fixes the memory amplitude,
+\begin{equation}
+    x^2 = \frac{2(1+u)\,\bar y^2 - \varepsilon_\text{eff}(y)/\beta_b'}{1+2u},
+\end{equation}
+and the second line reduces the problem to a single scalar equation for the total $2\omega_a$ amplitude $\bar y$:
+\begin{equation}
+    \bar y\,(1+u) = 2\beta_\Sigma\Bigl[\Bigl(1+\frac{(1+u)^2}{2}\Bigr)\bar y^2 + \bigl(1+u^2\bigr)\,x^2\Bigr].
+    \label{eq:app_sat_scalar}
+\end{equation}
+Here $y$ is related to $\bar y$ by $y=\bar y+\beta_a'\varepsilon_\text{eff}(y)/(2\beta_b')$ from \cref{eq:app_z}. Since $C<0$ by the second line of \cref{eq:app_sat_poly}, the physical root has $\bar y>0$ and must satisfy $x^2>0$.
+
+All other amplitudes follow:
+\begin{equation}
+\begin{aligned}
+    a_0 &= \pm x\,e^{i\theta}, & b_0 &= y\,e^{2i\theta},\\
+    b_{-1} &= \pm u\,x\,e^{3i\theta}, & a_{-1} &= -\frac{\beta_a'\varepsilon_\text{eff}(y)}{2\beta_b'}\,e^{2i\theta},\\
+    a_1 &= -\frac{(1+u)\,\bar y}{2\gamma}, & b_2 &= \frac{\beta_b'}{\beta_a'}\,a_1 .
+\end{aligned}
+\label{eq:hb_analytic_complex}
+\end{equation}
+To lowest order in $\eta$, $|b_{-1}|\simeq2\beta_b'|a_0|\bar y$.
+
+In the limit $u\to0$ and $\kappa_b'\to0$, \cref{eq:app_sat_scalar} reduces to $7\beta_\Sigma \bar y^2-\bar y-2\beta_\Sigma\varepsilon_d'/\beta_b'=0$, i.e.
+\begin{equation}
+\begin{split}
+    \bar y &= \frac{1+\sqrt{1+56\,\beta_\Sigma^2\,\varepsilon_d'/\beta_b'}}{14\,\beta_\Sigma},\\
+    |a_0|^2 &= 2\bar y^2 - \frac{\varepsilon_d'}{\beta_b'},
+    \qquad |b_0| = \bar y + \frac{\beta_a'\varepsilon_d'}{2\beta_b'} .
+\end{split}
+\label{eq:hb_analytic_simple}
+\end{equation}
+
+\paragraph*{Orbits and validity.}
+In the rotating frame, the memory follows $a_0+a_1e^{i\tau}+a_{-1}e^{-i\tau}$, an ellipse centered on $a_0$ with semi-axes $|a_1|\pm|a_{-1}|$. The buffer follows $b_0+b_2e^{2i\tau}+b_{-1}e^{-i\tau}$, which describes a trefoil, matching \cref{fig_limit_cycles} .
+
+Since $\bar y\sim1/(7\beta_\Sigma)$, the expansion in the junction phase is quantitatively controlled only when $|a_0|,\bar y,|C|\ll1$. Otherwise, the full Bessel system \cref{eq:app_sat_bessel} has to be solved numerically, using the solution of \cref{eq:app_sat_scalar} as the initial guess.
+
+\subsubsection{Equivalent Hamiltonian}
+\label{app:sat_hamiltonian}
+
+We look for a truncated Hamiltonian whose harmonic balance with the Ansatz \cref{eq:app_sat_ansatz} gives exactly the approximated equations, i.e.\ \cref{eq:app_sat_hb} with $F_N$ replaced by \cref{eq:app_FN_quad}. This is the case for the cubic expansion of \cref{eq:app_H}, $-2E_J\sin\varepsilon_p[\sin\hat X-\hat X]\to(E_J\sin\varepsilon_p/3)\hat X^3$, because its equations of motion are \cref{eq:app_eom} with $\cos X-1\to-X^2/2$. In normal-ordered monomials it reads
+\begin{equation}
+\begin{split}
+    H_\text{trunc} = {}& \omega_a|a|^2 + \omega_b|b|^2 + \varepsilon_d\cos(\omega_d t)(b+b^*)\\
+    &+ E_J\sin\varepsilon_p\Bigl[
+    \varphi_a^2\varphi_b\,a^2 b^*
+    + \varphi_a^3\,a^2a^*
+    + \varphi_b^3\,b\,b^{*2}\\
+    &\qquad + \varphi_a\varphi_b^2\,a\,b^{*2}
+    + 2\varphi_a^2\varphi_b\,|a|^2 b\\
+    &\qquad + 2\varphi_a\varphi_b^2\,a\,|b|^2
+    + \text{c.c.}\Bigr]\\
+    &+ E_J\sin\varepsilon_p\Bigl[
+    \frac{\varphi_a^3}{3}\,a^3
+    + \varphi_a^2\varphi_b\,a^2 b
+    + \varphi_a\varphi_b^2\,a\,b^2\\
+    &\qquad + \frac{\varphi_b^3}{3}\,b^3
+    + \text{c.c.}\Bigr].
+\end{split}
+\label{eq:app_Htrunc}
+\end{equation}
+
+Inserting \cref{eq:app_sat_ansatz} and projecting as in \cref{eq:app_sat_hb}, its harmonic balance reads, before phase reduction,
+\begin{equation}
+\begin{split}
+    0 &= C a_0 + Y a_0^* + Y^* b_{-1},\\
+    a_1 &= -\beta_a'\Bigl(\frac{C^2}{2} + |a_0|^2 + |Y|^2 + |b_{-1}|^2\Bigr),\\
+    a_{-1} &= \beta_a'\Bigl(CY + \frac{a_0^2}{2} + a_0^* b_{-1}\Bigr),\\
+    0 &= -i\beta_b'\Bigl(CY + \frac{a_0^2}{2} + a_0^* b_{-1}\Bigr)\\
+    &\quad - \frac{i\varepsilon_d'}{2} - \kappa_b' b_0,\\
+    \bigl(\kappa_b' - \tfrac{i}{2}\bigr)\,b_{-1} &= -i\beta_b'\bigl(C b_{-1} + a_0 Y\bigr),\\
+    \bigl(1-i\kappa_b'\bigr)\,b_2 &= -\beta_b'\Bigl(\frac{C^2}{2} + |a_0|^2 + |Y|^2 + |b_{-1}|^2\Bigr),
+\end{split}
+\label{eq:app_sat_hb_quad}
+\end{equation}
+with $C=2\mathrm{Re}(a_1+b_2)$ and $Y=b_0+a_{-1}$. After phase locking, these equations are exactly \cref{eq:app_sat_poly,eq:app_z}.
+
+The two groups of terms in \cref{eq:app_Htrunc} play different roles.
+\begin{itemize}
+    \item The first bracket contains every term that contributes to the equations of the oscillating amplitudes $a_0$, $a_{-1}$, $b_0$ and $b_{-1}$:
+    \begin{itemize}
+        \item the two-photon exchange $a^2b^*$, which alone gives the cat states of \cref{app:cat_hamiltonian};
+        \item together with $a|b|^2$, the same term produces the three-wave mixing $a_0Y\leftrightarrow b_{-1}$ responsible for the sideband at $3\omega_a$;
+        \item evaluated on the static displacements, all the terms of this bracket produce the frequency shifts $Ca_0$, $CY$ and $Cb_{-1}$.
+    \end{itemize}
+    \item The second bracket, $a^3$, $a^2b$, $ab^2$, $b^3$ and their complex conjugates, contributes only to the two static equations (for $a_1$ and $b_2$), through products of $a_1$ and $b_2$. These terms are nevertheless required: together with the static parts of the first bracket, they build the complete $C^2/2$ term, which is of the same order as the other terms.
+\end{itemize}
+
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=\columnwidth]{Chaos/figures_article/classical_limit_cycles_analytic_HB_12_10_2026.pdf}
+    \caption{Prediction of the harmonic balance. In yellow the numerical solution with many harmonics, in green the the numerical solution of the system \cref{eq:hb_analytic_complex} and in pink the analytical solution \cref{eq:hb_analytic_simple}. Despite its simplicity, we get a good estimate of the position and size of the satellite limit cycles for the memory.}
+    \label{fig:hb_analytic_limit_cycles}
+\end{figure}
+
+\section{Period-doubled satellite limit-cycle}
+\label{app:period_doubled}
+
+\Cref{fig:limit_cycles_period_doubled} shows the attractors at $\eps_p=0.588$ ($g_2/2\pi\simeq76.2~\mathrm{MHz}$) and $\eps_d/2g_2=5.06$. This point lies in the narrow window where the period-doubled satellite is stable, between the period doubling of the satellite ($75.3~\mathrm{MHz}$) and the Neimark--Sacker instability of the period-2 orbit ($76.7~\mathrm{MHz}$, \cref{fig_floq_mult_above_period_doubling}). The trajectories start from a $10\times10$ grid of memory states, $\mathrm{Re}\,a(0),\mathrm{Im}\,a(0)\in[-6,6]$, with $b(0)=0$. They are integrated over $200/\kappa_b$, and the last two memory periods are plotted in the frame rotating at the mode frequencies.
+
+The cats (blue) are still period-$2\pi/\omega_a$ orbits. The satellites (red) now close only after two memory periods: the single loop of the memory in \cref{fig_limit_cycles} splits into two nested loops, and the buffer orbit is traced twice with two different shapes. The two satellites are still related by the parity of the memory, $a\to-a$.
+
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=\columnwidth]{Chaos/figures_article/classical_limit_cycles_period_doubled_12_10_2026.pdf}
+    \caption{Limit cycles at $\eps_p=0.588$ ($g_2/2\pi\simeq76.2~\mathrm{MHz}$) and $\eps_d/2g_2=5.06$, after the period doubling of the satellite, in the rotating frame. Left: memory. Right: buffer. Blue: cats. Red: period-doubled satellites.}
+    \label{fig:limit_cycles_period_doubled}
+\end{figure}
+
+\section{Computation of the maximal Lyapunov exponent}
+\label{app:lyap_method}
+
+\paragraph*{Equations of motion.}
+We integrate \cref{eq_classical_dynamics} with the full Josephson nonlinearity, written for the dimensionless quadratures $x_a$ and $x_b$, with $a=(x_a+i\dot x_a/\omega_a)/\sqrt2$ and $b=(x_b+i\dot x_b/\omega_b)/\sqrt2$:
+\begin{equation}
+\begin{split}
+    \ddot x_a =\;& -\omega_a^2 x_a + 2\sqrt2\,E_J\sin\eps_p\,\omega_a\varphi_a\bigl[\cos X-1\bigr],\\
+    \ddot x_b =\;& -\omega_b^2 x_b - \sqrt2\,\omega_b\eps_d\cos(\omega_d t)\\
+    &+ 2\sqrt2\,E_J\sin\eps_p\,\omega_b\varphi_b\bigl[\cos X-1\bigr] - \kappa_b\dot x_b,
+\end{split}
+\label{eq:app_lyap_eom}
+\end{equation}
+with $X=\sqrt2(\varphi_a x_a+\varphi_b x_b)$. For $\kappa_b\ll\omega_b$, the damping term gives $\dot b=\dots-(\kappa_b/2)\,b$, as in \cref{eq_classical_dynamics}. The parameters are those of \cref{tab:parameters}, on a grid of $91\times116$ points: $\eps_p$ from $0.2$ to $1.1$ in steps of $0.01$, and $\eps_d/g_2$ from $2$ to $13.5$ in steps of $0.1$.
+
+\paragraph*{Algorithm.}
+For each grid point, we estimate the largest Lyapunov exponent $\lambda$ with the two-trajectory (Benettin) method, as implemented in \texttt{ChaosTools.jl} \TMD{Cite Benettin 1980 and ChaosTools.jl}:
+\begin{enumerate}
+    \item The trajectory is first evolved over a transient $T_\text{tr}=30/\kappa_b\simeq50~\mathrm{ns}$, which is discarded.
+    \item A test trajectory is started at a distance $d_0=10^{-7}$ from the reference, in the Euclidean norm of the state $(x_a,x_b,\dot x_a,\dot x_b)$.
+    \item Both trajectories are integrated together over $T=60/\kappa_b\simeq99~\mathrm{ns}$, about $400$ memory periods, with an adaptive Runge--Kutta scheme (Tsit5, relative and absolute tolerances $10^{-6}$). Their distance $d$ is checked every $\Delta t=1/(34\sqrt2\,\omega_a)\simeq0.8~\mathrm{ps}$.
+    \item Whenever $d$ leaves the interval $[10^{-3}d_0,\,10^{3}d_0]$, the test trajectory is brought back along the separation to the distance $d_0$, and $\ln(d/d_0)$ is accumulated.
+\end{enumerate}
+The exponent is the accumulated growth rate,
+\begin{equation}
+    \lambda = \frac{1}{T}\sum_i \ln\frac{d_i}{d_0},
+\end{equation}
+in $\mathrm{ns}^{-1}$. The maps show only $\mathrm{sign}(\lambda)$: positive for chaotic trajectories, negative for trajectories that converge to a limit cycle. The yellow line of \cref{fig_classical_onset_of_chaos_heatmap} is the onset of chaos, the smallest $\eps_d/2g_2$ with $\lambda>0$ at each $g_2$.
+
+This is a finite-time estimate over a window $T_\text{tr}+T=90/\kappa_b$. A trajectory that is still chaotic at the end of the window is counted as chaotic, even if it would eventually settle on a regular attractor (\cref{sec:transient_chaos}).
+
+\paragraph*{Convergence.}
+We recomputed the vacuum-start map on the full grid, changing one setting at a time (\cref{tab:lyap_convergence}). The reference run reproduces \cref{fig_classical_onset_of_chaos_heatmap} exactly. In every variant, the onset line keeps its position on most rows, and the sign changes are concentrated at $g_2/2\pi\ge100~\mathrm{MHz}$: $73$ to $94\%$ of them, except for $d_0$, which changes nothing. Between $80$ and $100~\mathrm{MHz}$, at most $3.4\%$ of the chaotic points become regular in any variant. The extended transient removes chaos mainly above $100~\mathrm{MHz}$, where it is transient (\cref{sec:transient_chaos}).
+
+\begin{table}[h]
+    \centering
+    \caption{Convergence of the vacuum-start map. Each line changes one setting of the reference run ($T_\text{tr}=30/\kappa_b$, $T=60/\kappa_b$, $d_0=10^{-7}$, tolerances $10^{-6}$). Unchanged: fraction of grid points with the same sign of $\lambda$. Rows moved: rows of the onset line that move by more than $1.2~\mathrm{MHz}$, and the largest shift.}
+    \label{tab:lyap_convergence}
+    \begin{tabular}{lccc}
+        \toprule
+        Variant & Unchanged & Chaotic & Rows moved \\
+        \midrule
+        Reference & -- & $35.4\%$ & -- \\
+        $T=120/\kappa_b$ & $99.4\%$ & $34.9\%$ & $3/99$, $3~\mathrm{MHz}$ \\
+        $T=240/\kappa_b$ & $98.9\%$ & $34.4\%$ & $5/99$, $4~\mathrm{MHz}$ \\
+        $T=480/\kappa_b$ & $98.1\%$ & $33.6\%$ & $11/99$, $4~\mathrm{MHz}$ \\
+        $T_\text{tr}=120/\kappa_b$ & $92.5\%$ & $28.9\%$ & $16/100$, $7~\mathrm{MHz}$ \\
+        $d_0=10^{-5}$ & $100\%$ & $35.4\%$ & $0/100$ \\
+        Tolerances $10^{-10}$ & $94.2\%$ & $35.1\%$ & $7/99$, $3~\mathrm{MHz}$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\paragraph*{Initial conditions.}
+The maps differ only by the initial state of the trajectories.
+\begin{enumerate}
+    \item \emph{Vacuum} (\cref{fig_classical_onset_of_chaos_heatmap}): $a(0)=b(0)=0$.
+    \item \emph{Cat} (\cref{fig:lyapunov_heatmap_cat_start}): one of the two cat states of \cref{app:cat_derivation}, $a(0)=i|\alpha|$ with $|\alpha|^2=\eps_d/2g_2$, and $b(0)=0$.
+    \item \emph{Satellite} (\cref{fig_lyap_satellite_start}): the point $\tau=0$ of the satellite orbit of \cref{app:satellites}, solved at every grid point from the full system (finite $u$, with the dissipative tilt $2\theta=-\arcsin(2\kappa_b'y/\eps_d')$):
+    \begin{equation}
+        a(0)=\frac{a_0+a_1+a_{-1}}{\varphi_a},\qquad b(0)=\frac{b_0+b_{-1}+b_2}{\varphi_b}.
+    \end{equation}
+    The trajectory starts close to the satellite and relaxes onto it if the satellite is stable.
+\end{enumerate}
+
+\section{Lyapunov heatmap with initial points at the center of the cat lobes}
+
+The vacuum start of the main text tests whether the dynamics reaches a cat. Starting on a cat instead tests whether the cat attractor itself stays regular. We compute the maximal Lyapunov exponent for trajectories started on a cat (initial condition 2 of \cref{app:lyap_method}), with the same parameters as in the main text.
+
+As shown on \cref{fig:lyapunov_heatmap_cat_start}, the threshold for chaotic dynamics is higher. From the cat, $22.6\%$ of the grid is chaotic, against $35.4\%$ from the vacuum. Of the $3732$ points that are chaotic from the vacuum, $1524$ become regular from the cat, while only $175$ points are chaotic from the cat but regular from the vacuum. The onset of chaos moves to larger $g_2$ by $23~\mathrm{MHz}$ at $\eps_d/2g_2=3$, and by $5~\mathrm{MHz}$ at $\eps_d/2g_2=6.5$. For $\eps_d/2g_2\le2.5$, no trajectory started on a cat is chaotic in our range of $g_2$.
+
+Between the two onsets, the dynamics is multistable: a regular cat coexists with a chaotic set whose basin contains the vacuum. Chaos there is a property of the initial condition, not an instability of the cat. Beyond both onsets, the trajectory started on the cat is chaotic as well.
+
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=\columnwidth]{Chaos/figures_article/heatmap_lyapunov_cat_start_restyled_12_10_2026.pdf}
+    \caption{Lyapunov heatmap when the trajectory is initialized close to a cat limit-cycle}
+    \label{fig:lyapunov_heatmap_cat_start}
+\end{figure}
+
+\section{Lyapunov heatmap with initial points on the satellite}
+\label{app:lyap_satellite}
+
+\TMD{Check if satellites do not exist in the light blue region, with less time for the computation of the Lyapunov exponent.}
+
+\paragraph*{Satellite start.}
+\Cref{fig_lyap_satellite_start} shows the map for trajectories started on the satellite (\cref{app:lyap_method}). On $13.8\%$ of the grid, at the lowest $g_2$, the harmonic balance has no admissible satellite solution ($x^2 \le 0$ or $2\kappa_b'|y| > \varepsilon_d'$), and these points are left blank. A trajectory with $\lambda < 0$ may still end on a cat rather than on the satellite. Each trajectory is therefore integrated again up to $T_\text{tr} + T$, and $\langle |b| \rangle$ is averaged over the last memory period. Each point is classified as chaotic if $\lambda > 0$, satellite if $\lambda < 0$ and $\langle|b|\rangle > 0.8$, and cat otherwise.
+
+Of the points where a satellite solution exists, $31.1\%$ end on the satellite, $20.0\%$ on a cat, and $49.0\%$ are chaotic. From low to high $g_2$, the map shows four regions.
+\begin{itemize}
+    \item A band about $12$ to $15~\mathrm{MHz}$ wide along the edge of the blank region, where the trajectory relaxes to a cat. There the analytic satellite exists but the actual satellite is unstable or absent, so the starting point lies in the basin of a cat.
+    \item A band where the trajectory stays on the satellite ($\lambda < 0$, large $\langle|b|\rangle$), up to $g_2/2\pi \simeq 74~\mathrm{MHz}$ at $\varepsilon_d/2g_2 = 6.75$ and $\simeq 80~\mathrm{MHz}$ at $\varepsilon_d/2g_2 = 2.5$. For $\varepsilon_d/2g_2 \ge 2$, its upper edge coincides, within one or two grid cells (about $1~\mathrm{MHz}$ each), with the instability line of the satellite branch obtained independently from Hill's method (\cref{subsec:hill}). Along that branch, the satellite first period-doubles. At $\varepsilon_d = 10.12\,g_2$ a Floquet multiplier crosses $-1$ at $g_2/2\pi \simeq 75.3~\mathrm{MHz}$. The period-two orbit then loses stability through a complex pair of multipliers leaving the unit circle (a Neimark--Sacker bifurcation) at $g_2/2\pi \simeq 76.7~\mathrm{MHz}$. Just beyond that line, the trajectories become chaotic.
+    \item A region of mostly uniform chaos, up to $g_2/2\pi \simeq 100~\mathrm{MHz}$ for $\varepsilon_d/2g_2 \gtrsim 3.5$.
+    \item At larger $g_2$, and at smaller $\varepsilon_d/2g_2$, a fine-grained mixture of chaotic, cat and satellite end states between neighbouring grid points.
+\end{itemize}
+The comparison with the vacuum start is discussed in \cref{subsec:chaos_lyap}. The third region is the chaotic attractor born from the period-doubled satellite, and the fourth one the region of transient chaos past the boundary crisis (\cref{sec:transient_chaos}).
+
+\paragraph*{Limitations.}
+The fine-grained region at large $g_2$ should not be read as a sharp phase diagram. There the chaos is partly transient (\cref{sec:transient_chaos}), and neighbouring points can fall on either side of the end of the transient. These are also the points most sensitive to the integration settings (\cref{tab:lyap_convergence}). In the same way, the cat and satellite basins are probed with a single initial condition per grid point. The maps thus show which attractor that particular initial condition reaches within the window, not the full basin structure.
+
+
+
+\section{Computation of IPR as a signature of chaos}
+\label{app:ipr}
+
+\subsection{Definition}
+
+For a pure state $|\psi\rangle$ expanded on an orthonormal basis
+$\{|k\rangle\}$, the inverse participation ratio (IPR) is
+\begin{equation}
+  \mathrm{IPR} = \sum_k |\langle k|\psi\rangle|^4 .
+  \label{eq:ipr_pure}
+\end{equation}
+It equals $1$ when $|\psi\rangle$ is a single basis state and $1/N$ when
+$|\psi\rangle$ is spread evenly over $N$ of them. Its inverse,
+$N_\mathrm{eff} = 1/\mathrm{IPR}$, counts the basis states that effectively
+take part in $|\psi\rangle$. The memory is entangled with the lossy buffer, so
+its reduced state $\hat\rho_a = \mathrm{Tr}_b\,\hat\rho$ is mixed. We
+therefore use the natural generalization
+\begin{equation}
+  \mathrm{IPR}(t) = \sum_{k=0}^{n_a-1} p_k(t)^2 ,
+  \qquad
+  p_k(t) = \langle k|\hat\rho_a(t)|k\rangle ,
+  \label{eq:ipr_mixed}
+\end{equation}
+where $|k\rangle$ are the Fock states of the memory. For a pure state,
+Eq.~\eqref{eq:ipr_mixed} reduces to Eq.~\eqref{eq:ipr_pure}. Only the Fock
+populations enter: Eq.~\eqref{eq:ipr_mixed} measures how far the photon-number
+distribution of the memory is spread, independently of the coherences
+between Fock states.
+
+\subsection{IPR as a probe of quantum chaos}
+
+The participation ratio was introduced to quantify the localization of
+vibrational modes~\cite{Bell1970} and electronic wave
+functions~\cite{Wegner1980,Kramer1993}. It became a standard measure of
+eigenstate delocalization in quantum chaos~\cite{Izrailev1990,Haake2010}. In a
+regular system, eigenstates and wave packets stay localized in a
+suitable unperturbed basis, and the IPR remains of order one. In a chaotic
+system they spread ergodically over the energetically available states, and
+the IPR decreases towards its random-state value, $2/(N+1)$ for a random
+complex vector in dimension $N$~\cite{Izrailev1990,Santos2010,Borgonovi2016}.
+Applied to a time-evolved state instead of eigenstates, a decay of
+$\mathrm{IPR}(t)$ quantifies the dynamical spreading of an initially localized
+state over the basis~\cite{Borgonovi2016}. It complements the
+out-of-time-order correlator, which probes operator growth.
+
+For a cat qubit, the Fock basis of the memory is the natural reference. In the
+stabilized regime, the two-photon dissipation confines the memory to the cat
+manifold spanned by $|\pm\alpha\rangle$. Its photon-number distribution
+remains that of the initial cat, a Poisson distribution of mean $|\alpha|^2$
+restricted to one parity. A spreading of the Fock distribution beyond it,
+i.e.\ a decrease of the IPR, signals that the dynamics leaves the cat
+manifold.
+
+\subsection{Results}
+
+Figure~\ref{fig:ipr} shows $\mathrm{IPR}(T)$ at $T=2/\kappa_b\simeq3.3~\mathrm{ns}$ (about $13$ memory periods) over the
+$(\varepsilon_p, \varepsilon_d/g_2)$ plane. Part of the vertical gradient
+comes from the initial state: a larger drive prepares a larger cat, whose
+Fock distribution is wider, and $\mathrm{IPR}(0)$ decreases from $0.526$ at
+$r = 2$ to $0.270$ at $r = 9$. The dynamics is read from the ratio
+$\mathrm{IPR}(T)/\mathrm{IPR}(0)$ along each row.
+
+In the stabilized regime the Fock distribution changes little. At
+$\varepsilon_p = 0.2$ ($g_2/2\pi\simeq27~\mathrm{MHz}$),
+$\mathrm{IPR}(T)/\mathrm{IPR}(0)$ goes from $0.99$ at $r=2$ to $0.86$ at
+$r=9$. This residual decrease sets the baseline of a stabilized cat.
+
+As $\varepsilon_p$ increases, $\mathrm{IPR}(T)$ decreases for every drive
+strength, faster at stronger drive, and without a sharp threshold. For
+$r \geq 5$, $\mathrm{IPR}(T)/\mathrm{IPR}(0)$ reaches a plateau of $0.14$ to
+$0.20$ at $g_2/2\pi\simeq87$--$94~\mathrm{MHz}$ ($\varepsilon_p\simeq0.69$--$0.75$)
+and stays there up to $\varepsilon_p=1.08$. The plateau sets in within the range
+of the classical onset of chaos at these cat sizes, from $79$ to
+$101~\mathrm{MHz}$ for $\varepsilon_d/2g_2=4.5$ to $2.5$
+(\cref{fig_classical_onset_of_chaos_heatmap}). At $\varepsilon_p = 1.08$, the
+memory effectively occupies $N_\mathrm{eff} = 1/\mathrm{IPR} \approx 15$ to
+$20$ Fock states for $r=7$ to $9$, against $3.3$ to $3.7$ for the initial cat.
+This is the strong spreading of the photon-number distribution expected from
+chaotic dynamics, which mixes the cat with Fock states outside its parity
+sector and its Poisson envelope. For the smallest cats, $r=2$ and $3$, the
+decrease is slower and does not saturate in our range:
+$\mathrm{IPR}(T)/\mathrm{IPR}(0)=0.44$ and $0.30$ at $\varepsilon_p=1.08$.
+
+The same simulations give the Wehrl entropy $S_W(T)$ of the memory.
+\TMD{Recompute the correlation between $S_W(T)$ and $-\ln\mathrm{IPR}(T)$ from
+Wehrl\_array\_poster\_13\_10\_2026.json (it was $0.98$ on the previous run).}
+
+Three caveats apply. First, the IPR is basis dependent: a decrease signals
+spreading in the Fock basis of the memory, which can also come from a change
+of the mean photon number or from the entanglement with, and the loss
+through, the buffer. Its interpretation as a chaos indicator rests on the
+comparison with the stabilized regime, where these effects are present but
+change the IPR by at most $14\%$. Second, the IPR is a snapshot at a single
+time $T=2/\kappa_b$, two buffer lifetimes. Third, the plateau of the largest
+cats is close to the value of a state spread over the whole truncated space,
+$\mathrm{IPR}\approx2/(n_a+1)\simeq0.07$ for $n_a=29$: there, $\mathrm{IPR}(T)$
+is likely limited by the truncation, and $N_\mathrm{eff}$ is a lower bound.
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\columnwidth]{Chaos/figures_article/IPR_heatmap_12_10_2026.pdf}
+  \caption{Inverse participation ratio
+    $\mathrm{IPR}(T) = \sum_k \langle k|\hat\rho_a(T)|k\rangle^2$ of the
+    memory in its Fock basis, at $T = 2/\kappa_b \simeq 3.3~\mathrm{ns}$, as a function of the pump
+    amplitude $\varepsilon_p$ and the drive strength $\varepsilon_d/g_2$.
+    The memory starts in the even cat state of amplitude
+    $\alpha = \sqrt{\varepsilon_d/2g_2}$. Truncations $n_a = 29$, $n_b = 17$.}
+  \label{fig:ipr}
+\end{figure}
+
+
+\section{Computation of the OTOC}
+\label{app:otoc}
+
+\paragraph*{Heisenberg picture of a time-dependent Lindbladian.}
+The density matrix obeys $\dot{\hat\rho}=\mathcal L_t\hat\rho$, with $\mathcal L_t\hat\rho=-i[H(t),\hat\rho]+\kappa_b\mathcal D[\hb]\hat\rho$ and $H(t)$ given by \cref{eq_ham}. Its solution is $\hat\rho(t)=\Phi(t,0)\hat\rho(0)$, with the time-ordered channel
+\begin{equation}
+    \Phi(t,s)=\mathcal T\exp\Bigl(\int_s^t\mathcal L_{t'}\,dt'\Bigr),
+\end{equation}
+later times to the left, so that $\partial_t\Phi(t,s)=\mathcal L_t\Phi(t,s)$ and $\partial_s\Phi(t,s)=-\Phi(t,s)\mathcal L_s$. The Heisenberg-picture operator is defined by $\mathrm{Tr}[\hat A\,\hat\rho(t)]=\mathrm{Tr}[\hat A(t)\,\hat\rho(0)]$ for every initial state, i.e.\ $\hat A(t)=\Phi^\dagger(t,0)\hat A$, where $\dagger$ is the adjoint for the Hilbert--Schmidt product. In vectorized form, $\mathrm{Tr}[\hat A\hat\rho(t)]=\langle\langle\hat A|M|\hat\rho(0)\rangle\rangle$ with $M$ the matrix of $\Phi(t,0)$, so that $|\hat A(t)\rangle\rangle=M^\dagger|\hat A\rangle\rangle$. For a unitary evolution, $\Phi(t,0)\hat\rho=U\hat\rho U^\dagger$ and $\Phi^\dagger(t,0)\hat A=U^\dagger\hat AU$. The adjoint generator is
+\begin{equation}
+    \mathcal L_t^\dagger\hat A=i[H(t),\hat A]+\kappa_b\Bigl(\hb\da\hat A\hb-\tfrac12\{\hb\da\hb,\hat A\}\Bigr).
+\end{equation}
+Taking the adjoint reverses the time ordering, so that
+\begin{equation}
+    \frac{d\hat A(t)}{dt}=\Phi^\dagger(t,0)\bigl[\mathcal L_t^\dagger\hat A\bigr].
+\end{equation}
+The generator acts on $\hat A$ before the propagation. When $\mathcal L$ does not depend on time, $\mathcal L^\dagger$ commutes with $\Phi^\dagger$ and this reduces to the usual adjoint master equation $\dot{\hat A}=\mathcal L^\dagger\hat A(t)$~\cite[p.~125]{Breuer2006Jan}. Here the drive $\eps_d\cos(\omega_dt)$ makes $\mathcal L_t$ time dependent, and integrating $\dot{\hat X}=\mathcal L_t^\dagger\hat X$ forward from $\hat X(0)=\hat A$ gives the wrong time ordering.
+
+\paragraph*{Backward equation and jump operator.}
+For a fixed final time $t$, $\hat Y(u)=\Phi^\dagger(t,t-u)\hat A$ obeys \cref{eq_otoc_backward}: $d\hat Y/du=\mathcal L^\dagger_{t-u}\hat Y$, with $\hat Y(0)=\hat A$ and $\hat Y(t)=\hat A(t)$. The jump operator in $\mathcal L^\dagger$ is the Schrödinger-picture $\hb$. It must not be replaced by a Heisenberg-picture $\hb(t)$: for an open system, $\Phi^\dagger$ is not multiplicative, $\Phi^\dagger(\hat A\hat B)\neq\Phi^\dagger(\hat A)\Phi^\dagger(\hat B)$, so expressions such as $\hb\da(t)\hat A(t)\hb(t)$ are not defined by the reduced dynamics.
+
+\paragraph*{Periodicity.}
+Since the pump is static, $\mathcal L_t$ has the period $\tau=2\pi/\omega_d$ of the drive. For $t=r+n\tau$ with $0\le r<\tau$, $\mathcal L_{t-u}=\mathcal L_{r-u}$ for every $n$. All the final times $t=r+n\tau$ thus share the same equation $d\hat Y/du=\mathcal L^\dagger_{r-u}\hat Y$ with the same initial condition, hence the same solution: a single integration gives $\hat A(r+n\tau)$ at $u=r+n\tau$, for all $n$. Only the generator is periodic, not $\hat A(t)$: $\hat A(r+n\tau)=(P^\dagger)^n\,\Phi^\dagger(r,0)\hat A$, with $P=\Phi(\tau,0)$ the one-period channel. We use eight offsets $r=k\tau/8$ and three periods, i.e.\ $25$ times up to $T=3\tau\simeq0.37~\mathrm{ns}$, $\kappa_bT\simeq0.225$.
+
+\paragraph*{Numerics.}
+The integration runs in the interaction frame of the static part $H_s$ of $H(t)$, written in its eigenbasis: $\hat Y=W\tilde Y W^\dagger$ with $W=e^{iH_su}$. In this frame the only time dependences left are the drive and $\tilde b(u)=W^\dagger\hb W$. The latter is the change of frame, not a Heisenberg-picture evolution of the jump operator. The equation is integrated with \texttt{dynamiqs}, as a master equation with Hamiltonian $-H$, jump operator $\tilde b^\dagger$ and the product $\tilde b^\dagger\tilde b$ passed explicitly. We evolve $\ha$ and form the position in the frame rotating with the memory, $\hat x_a(t)=[\ha(t)e^{i\omega_at}+\text{h.c.}]/\sqrt2$, which is allowed because $\Phi^\dagger$ is linear and preserves adjoints.
+
+\paragraph*{OTOC and fit.}
+The OTOC is $C(t)=-\langle\psi|[\hat x_a(t),\hat p_a]^2|\psi\rangle=\|[\hat x_a(t),\hat p_a]\,\psi\|^2$, since the commutator is anti-Hermitian, with $|\psi\rangle$ the even cat of amplitude $\alpha=\sqrt{\eps_d/2g_2}$ and the buffer in vacuum (or the coherent state $|i\alpha\rangle$ in \cref{app:OTOC_coherent}). For open systems, the OTOC is not uniquely defined. We use the Heisenberg operator given by the adjoint channel, one common choice. The rate $\lambda$ is half the slope of a linear fit of $\ln C$ against $\kappa_bt$ over $[0,T]$, so that $\lambda$ is in units of $\kappa_b$.
+
+\paragraph*{Check.}
+We checked this procedure against a direct Schrödinger integration, at a small truncation ($n_a=10$, $n_b=5$), $\eps_d=2g_2$ and $\eps_p=0.2$ and $0.93$. For $\hat A=\ha$, $\ha\da\ha$ and $\hat x_a$, $\langle\psi|\hat A(t)|\psi\rangle$ agrees with $\mathrm{Tr}[\hat A\,\hat\rho(t)]$ to a relative $5\times10^{-13}$ at all $25$ times. The full operator $\hat x_a(t)$ agrees to $1.1\times10^{-12}$ on five random pairs of states, through $\langle\phi|\hat x_a(t)|\chi\rangle=\mathrm{Tr}[\hat x_a\,\Phi(t,0)(|\chi\rangle\langle\phi|)]$. The forward adjoint equation, in contrast, deviates by $0.6$ to $21\%$ from the exact result, depending on the operator and on $\eps_p$.
+
+\section{OTOC but computed on a coherent state and not a cat}
+\label{app:OTOC_coherent}
+
+One could assert that the computation of the OTOC is dependent on the state it gets averaged on. Furthermore, we showed the results for a cat state, a bimodally distributed state and could be different for a more standard unimodally distributed state such as a coherent state. In this appendix, we present on \cref{fig:OTOC_coherent} the maximal Lyapunov exponent derived from the OTOC when averaged on the coherent state $\ket{\alpha}$, building block of the cat state. We see no major changes.
+
+\paragraph*{Truncation.}
+We recomputed this map with $(n_a,n_b)=(35,18)$ and $(40,20)$, in addition to $(29,17)$. Below $g_2/2\pi\simeq90~\mathrm{MHz}$, the three truncations agree to $2\times10^{-3}\kappa_b$. Deep in the chaotic region, from $110~\mathrm{MHz}$ on, going from $n_a=35$ to $40$ changes the rates by at most $0.2\,\kappa_b$, about $3\%$ where $|\lambda|>\kappa_b$. The rates are not converged where they change sign, between $99$ and $106~\mathrm{MHz}$: there they increase with every truncation, by up to $0.5\,\kappa_b$ from $n_a=29$ to $35$ and $0.8\,\kappa_b$ from $35$ to $40$. The onset of positive rates moves to lower $g_2$ by one grid step (about $2.6~\mathrm{MHz}$) for $5$ of the $8$ drive strengths between $n_a=29$ and $40$. The quantum onset obtained with a finite truncation is therefore an upper bound, and the gap with the classical onset can only grow with $n_a$. A likely reason is that the classical chaotic region extends to $|a|\simeq7.5$, about $56$ photons, beyond $n_a=40$. For the example curves, already computed with $n_a=38$, going to $n_a=40$ changes the OTOC by at most $5\%$.
+
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=\columnwidth]{Chaos/figures_article/Lyapunov_from_OTOC_init_coherent_12_10_2026.pdf}
+    \caption{OTOC averaged on a coherent state (lobe of the cat state)}
+    \label{fig:OTOC_coherent}
+\end{figure}
+
+\section{Derivation of the parity-protected Hamiltonian}
+\label{app:parity_circuit}
+
+In this appendix we derive the Hamiltonian of the mirror-symmetric
+circuit whose nonlinearity is even in the memory quadratures,
+\begin{equation}
+  -4E_J \sin\epsilon_p\cos(\varphi_a \hat{x}_a)\sin(\varphi_b \hat{x}_b),
+  \label{eq:app_target}
+\end{equation}
+by combining two identical asymmetrically threaded SQUIDs (ATS).
+As in the main text, the cat is autoparametric: $\omega_b=2\omega_a$, and
+all external fluxes are static ($\omega_p=0$).
+The circuit is treated classically and quantized only at the end
+(Sec.~\ref{app:quantization}). We use the reduced flux quantum
+$\phi_0=\hbar/2e$, write phases as $\phi=\Phi/\phi_0$, and define
+$E_L=\phi_0^2/L$ and $E_C=e^2/2C$.
+
+% --- Optional figure -------------------------------------------------
+% \begin{figure}[t]
+%   \centering
+%   \includegraphics[width=0.8\columnwidth]{fig_two_ATS_circuit}
+%   \caption{Mirror-symmetric circuit (configuration A). Two identical
+%   ATS elements connect islands 1 and 2 to ground and receive identical
+%   external fluxes. They are coupled by $C_c$ (optionally $L_c$), and the
+%   transmission line couples symmetrically to both inductor nodes through
+%   $C_p$. The memory is the antisymmetric mode, the buffer the symmetric one.}
+%   \label{fig:app_circuit}
+% \end{figure}
+
+\subsection{ATS element}
+
+Each element $i=1,2$ consists of two junctions ($E_J$, capacitance $C_J$)
+and a central inductor $L$ in parallel between an island and ground, with
+sub-nodes $\Phi_{i,1}$, $\Phi_{i,2}$ (inductor) and $\Phi_{i,3}$. The loop
+fluxes impose $\Phi_{i,2}-\Phi_{i,1}=\Phi_{l,i}$ and
+$\Phi_{i,3}-\Phi_{i,2}=\Phi_{r,i}$, both static. Defining
+$\Phi_{\Sigma,i}=(\Phi_{l,i}+\Phi_{r,i})/2$,
+$\Phi_{\Delta,i}=(\Phi_{r,i}-\Phi_{l,i})/2$ and the island coordinate
+$\Phi_i=(\Phi_{i,1}+\Phi_{i,3})/2$, one has
+$\Phi_{i,1,3}=\Phi_i\mp\Phi_{\Sigma,i}$ and $\Phi_{i,2}=\Phi_i-\Phi_{\Delta,i}$.
+Assuming equal junction capacitances and that the external circuit
+attaches to the inductor sub-node $\Phi_{i,2}$, the element Lagrangian is
+$\mathcal{L}_{\mathrm{ATS},i}=C_J\dot{\Phi}_i^2-U_i(\phi_i)$, up to a
+constant, with
+\begin{equation}
+  U_i(\phi_i)=\frac{E_L}{2}\left(\phi_i-\phi_{\Delta,i}\right)^2
+  -2E_J\cos\phi_{\Sigma,i}\,\cos\phi_i .
+  \label{eq:app_U}
+\end{equation}
+Since the external fluxes are static, they generate no charge drive on
+$\Phi_i$, and the choice of the irrotational gauge~\cite{You2019May} does
+not matter.
+
+\subsection{Circuit Lagrangian and bias point}
+
+The inductor nodes carry a shunt capacitance $C_s$, are coupled to each
+other by $C_c$ (and optionally $L_c$), and each couples through $C_p$ to
+the port node at voltage $V_p(t)$. With identical $\Delta$-fluxes
+$\Phi_{\Delta,1}=\Phi_{\Delta,2}=\Phi_\Delta$, the Lagrangian reads
+\begin{equation}
+\begin{aligned}
+  \mathcal{L}={}&\sum_{i=1,2}\Big[\frac{C}{2}\dot{\Phi}_i^2
+  +\frac{C_p}{2}\big(\dot{\Phi}_i-V_p\big)^2
+  -U_i(\phi_i)\Big]\\
+  &+\frac{C_c}{2}\big(\dot{\Phi}_1-\dot{\Phi}_2\big)^2
+  -\frac{(\Phi_1-\Phi_2)^2}{2L_c},
+\end{aligned}
+\label{eq:app_L}
+\end{equation}
+with $C=C_s+2C_J$, up to a constant.
+
+In configuration A both elements are biased identically,
+$\phi_{\Sigma,i}=-\pi/2+\epsilon_p$ and $\phi_{\Delta,i}=-\pi/2+\eta$,
+with static $\epsilon_p$ and $\eta$. Shifting $\vartheta_i=\phi_i+\pi/2$,
+each element contributes $C\dot{\Phi}_i^2/2-U_i^{\mathrm{eff}}$ with
+\begin{equation}
+  U_i^{\mathrm{eff}}=\frac{E_L}{2}\vartheta_i^2-E_L\,\eta\,\vartheta_i
+  -2E_J\sin\epsilon_p\sin\vartheta_i,
+  \label{eq:app_Ueff}
+\end{equation}
+up to a constant. At $\epsilon_p=0$ the junctions do not contribute to the
+linear inductance. Equation~\eqref{eq:app_Ueff} is the classical,
+single-element counterpart of the ATS potential of
+Ref.~\cite{Carde2025Feb}, with a static pump.
+
+\subsection{Normal modes and classical Hamiltonian}
+
+We introduce the symmetric and antisymmetric coordinates
+$\Psi_\pm=\phi_0(\vartheta_1\pm\vartheta_2)/2$. Using
+$2\cos\theta_a\sin\theta_b=\sin(\theta_b+\theta_a)+\sin(\theta_b-\theta_a)$,
+the Lagrangian separates into
+\begin{equation}
+\begin{aligned}
+  \mathcal{L}={}&\frac{C_+}{2}\dot{\Psi}_+^2-\frac{\Psi_+^2}{2L_+}
+  +\frac{C_-}{2}\dot{\Psi}_-^2-\frac{\Psi_-^2}{2L_-}\\
+  &-2C_pV_p\dot{\Psi}_+
+  +2E_L\,\eta\,\frac{\Psi_+}{\phi_0}\\
+  &+4E_J\sin\epsilon_p\cos\frac{\Psi_-}{\phi_0}\sin\frac{\Psi_+}{\phi_0},
+\end{aligned}
+\label{eq:app_Lnormal}
+\end{equation}
+with
+\begin{equation}
+\begin{aligned}
+  C_+&=2\bar{C}, & L_+&=\frac{L}{2},\\
+  C_-&=2(\bar{C}+2C_c), & \frac{1}{L_-}&=\frac{2}{L}+\frac{4}{L_c},
+\end{aligned}
+\end{equation}
+and $\bar{C}=C+C_p$. Mirror symmetry forbids any $\Psi_+\Psi_-$ or
+$\dot{\Psi}_+\dot{\Psi}_-$ cross term, so $\Psi_\pm$ are exactly the
+normal modes. Because the vector $(1,1)$ is an eigenvector of the
+capacitance matrix and the $\Delta$-fluxes are identical, both the port
+and the $\Delta$-flux term couple only to $\Psi_+$.
+
+With conjugate charges $Q_+=C_+\dot{\Psi}_+-2C_pV_p$ and
+$Q_-=C_-\dot{\Psi}_-$ (i.e.\ $Q_\pm=Q_1\pm Q_2$), the Legendre transform
+gives
+\begin{equation}
+\begin{aligned}
+  \mathcal{H}={}&\frac{Q_+^2}{2C_+}+\frac{\Psi_+^2}{2L_+}
+  +\frac{Q_-^2}{2C_-}+\frac{\Psi_-^2}{2L_-}\\
+  &+\frac{C_p}{\bar{C}}V_p(t)\,Q_+
+  -2E_L\,\eta\,\frac{\Psi_+}{\phi_0}\\
+  &-4E_J\sin\epsilon_p\cos\frac{\Psi_-}{\phi_0}\sin\frac{\Psi_+}{\phi_0}.
+\end{aligned}
+\label{eq:app_H_bis}
+\end{equation}
+The linear frequencies are
+\begin{equation}
+\begin{aligned}
+  \omega_b&=\frac{1}{\sqrt{L_+C_+}}=\frac{1}{\sqrt{L\bar{C}}},\\
+  \omega_a&=\frac{1}{\sqrt{L_-C_-}}=\sqrt{\frac{1/L+2/L_c}{\bar{C}+2C_c}} .
+\end{aligned}
+\end{equation}
+The antisymmetric mode $\Psi_-$ is the memory $a$ and the symmetric mode
+$\Psi_+$ is the buffer $b$. Without $L_c$, the coupling capacitance
+yields $\omega_a<\omega_b$; adding $L_c$ raises $\omega_a$. Without $L_c$,
+the autoparametric condition $\omega_b=2\omega_a$ requires
+$\bar{C}+2C_c=4\bar{C}$, i.e.\ $C_c=3\bar{C}/2$, a coupling capacitance
+larger than the island capacitance. An inductive coupling $L_c$ relaxes
+this condition.
+
+\paragraph{Cancellation of the static force on the buffer.}
+The nonlinear term contains the linear piece
+$-4E_J\sin\epsilon_p\,\Psi_+/\phi_0$. Together with the $\Delta$-flux
+term, the total linear term is
+$-(2E_L\eta+4E_J\sin\epsilon_p)\Psi_+/\phi_0$, a static force on the
+buffer, which vanishes for
+\begin{equation}
+  \eta=-\frac{2E_J\sin\epsilon_p}{E_L}.
+  \label{eq:app_eta}
+\end{equation}
+The point $\vartheta_i=0$ is then the static equilibrium. This is the
+two-element counterpart of the choice of $\varphi_d$ in the main text
+(\cref{eq_phi_d}). Equivalently, at $\eta=0$, the DC change of frame of
+\cref{app:dc_frame} removes the force by displacing the buffer, and turns it
+into an offset of the buffer phase inside the sine. The memory has no linear
+term, so its phase is never shifted and the parity of the memory is kept in
+both cases.
+
+\paragraph{Configuration B.}
+Alternatively, the elements can be biased in antiphase,
+$\phi_{\Sigma,1,2}=-\pi/2\pm\epsilon_p$. The
+nonlinearity then becomes
+$-4E_J\sin\epsilon_p\,\cos(\Psi_+/\phi_0)\sin(\Psi_-/\phi_0)$, so the roles
+of the modes are exchanged: the memory must be $\Psi_+$ and the buffer
+$\Psi_-$, and the port must couple to $Q_-$ only (e.g.\ through a balun).
+Because of this port requirement, configuration A is preferred.
+
+\subsection{Quantization}
+\label{app:quantization}
+
+We promote $[\hat{\Psi}_\pm,\hat{Q}_\pm]=i\hbar$ and write the line
+voltage as $V_p(t)=V_d\cos(\omega_dt)+\hat{V}_B$, a classical buffer drive
+plus the transmission-line bath operator. With
+$\hat{\Psi}_-=\Psi_a^{\mathrm{zpf}}\hat{x}_a$,
+$\hat{Q}_-=Q_a^{\mathrm{zpf}}\hat{y}_a$ (and likewise for $b$ with
+$\Psi_+,Q_+$), $\hat{x}_a=\hat{a}+\hat{a}^\dagger$,
+$\hat{y}_a=-i(\hat{a}-\hat{a}^\dagger)$ (same for $b$),
+$\Psi^{\mathrm{zpf}}=\sqrt{\hbar Z/2}$, $Q^{\mathrm{zpf}}=\sqrt{\hbar/2Z}$
+and $Z_{a,b}=\sqrt{L_\mp/C_\mp}$, the phase zero-point fluctuations are
+\begin{equation}
+  \varphi_a=\left(\frac{2E_{C_-}}{E_{L_-}}\right)^{1/4},\qquad
+  \varphi_b=\left(\frac{2E_{C_+}}{E_{L_+}}\right)^{1/4},
+\end{equation}
+with $E_{C_\pm}=e^2/2C_\pm$ and $E_{L_\pm}=\phi_0^2/L_\pm$. The island
+phases are $\hat{\vartheta}_{1,2}=\varphi_b\hat{x}_b\pm\varphi_a\hat{x}_a$:
+the memory enters the two elements with opposite signs and the buffer
+with the same sign. Dropping zero-point energies, the system and
+system--bath Hamiltonians read
+\begin{equation}
+\begin{aligned}
+  \frac{\hat{H}_s}{\hbar}={}&\omega_a\hat{a}^\dagger\hat{a}
+  +\omega_b\hat{b}^\dagger\hat{b}\\
+  &+2\epsilon_d\cos(\omega_dt)\,\hat{y}_b
+  -2\frac{E_L}{\hbar}\eta\,\varphi_b\hat{x}_b\\
+  &-4\frac{E_J}{\hbar}\sin\epsilon_p
+  \cos(\varphi_a\hat{x}_a)\sin(\varphi_b\hat{x}_b),\\
+  \frac{\hat{H}_{sB}}{\hbar}={}&\hat{y}_b\otimes\hat{B},
+\end{aligned}
+\label{eq:app_Hq}
+\end{equation}
+with $\epsilon_d=C_pQ_b^{\mathrm{zpf}}V_d/(2\hbar\bar{C})$ and
+$\hat{B}=C_pQ_b^{\mathrm{zpf}}\hat{V}_B/(\hbar\bar{C})$.
+
+Equation~\eqref{eq:app_Hq} has the same structure as the single-ATS
+Hamiltonian of Ref.~\cite{Carde2025Feb}, with three differences:
+(i)~the nonlinearity is the target form~\eqref{eq:app_target}, even under
+$\hat{x}_a\to-\hat{x}_a$ at all times;
+(ii)~the memory does not appear in either the drive or the bath coupling
+($u=0$ exactly), i.e.\ it is a dark mode of the port;
+(iii)~there is no linear term in $\hat{x}_a$ for any $\eta$, so the
+memory is never displaced. The linear terms act on the buffer only and
+cancel for the choice~\eqref{eq:app_eta}. Both $\eta=0$ and
+\cref{eq:app_eta} are parity-protected operating points; the second one
+does not displace the buffer, like the choice of $\varphi_d$ in the main
+text.
+
+\section{Transient chaos}
+\label{sec:transient_chaos}
+
+
+We integrate the classical mean-field equations of the memory and buffer amplitudes $a(t)$ and $b(t)$, \cref{eq_classical_dynamics}, at $\eps_p=0.802$ and $\eps_d=5.2\,g_2$, i.e.\ $g_2/2\pi\simeq98.8~\mathrm{MHz}$ and $\eps_d/2g_2=2.6$, with the other parameters of \cref{tab:parameters}. This point lies just above the onset of chaos at this cat size (\cref{fig_classical_onset_of_chaos_heatmap}). The initial conditions form a uniform $10\times10$ grid in the memory phase space, $\mathrm{Re}\,a(0)\in[-5,5]$ and $\mathrm{Im}\,a(0)\in[-4,4]$, with $b(0)=0$. The trajectories are integrated over $1000/\kappa_b$.
+
+Each trajectory is sampled once per memory period $T_a = 2\pi/\omega_a$,
+this is the Poincaré map of the memory at period $T_a$. A periodic orbit of period $T_a$ maps to a fixed point, a period-doubled orbit to two points, and a chaotic orbit to an extended set.
+
+Each sampled trajectory is cut into $K = \lfloor N_s/M \rfloor$ consecutive windows of $M$ points,
+\begin{equation}
+    \mathcal{C}^{(j)}_k = \bigl\{ a^{(j)}_n \,:\, (k-1)M \le n < kM \bigr\}, \qquad k = 1,\dots,K .
+\end{equation}
+
+We use windows of $M=200$ memory periods, about $30/\kappa_b$. We will compute the entropy of these trajectory cuts and we start by cutting phase space in cells $\mathcal{B}_{lm}$, a grid of $200\times200$ cells covering all the sampled points. The same partition is used for every window, so that entropies can be compared. For each trajectory and window we compute the occupation probabilities and the Shannon entropy
+\begin{equation}
+\begin{split}
+    p^{(j,k)}_{lm} =&\; \frac{1}{M}\,\#\bigl\{ a \in \mathcal{C}^{(j)}_k \,:\, a \in \mathcal{B}_{lm} \bigr\},
+    \\
+    H_{j,k} =&\; -\sum_{l,m} p^{(j,k)}_{lm} \ln p^{(j,k)}_{lm},
+\end{split}
+\end{equation}
+with $0\ln 0 = 0$. By construction $0 \le H_{j,k} \le \ln M \simeq 5.30$.
+\begin{itemize}
+    \item A window whose $M$ points all fall in the same cell, such as a period-$T_a$ orbit, gives $H = 0$.
+    \item A period-$2T_a$ orbit gives $H = \ln 2$.
+    \item A window whose points spread over $M$ distinct cells, as for a chaotic trajectory, saturates at $H \simeq \ln M$.
+\end{itemize}
+
+\paragraph*{Classification and fractions.}
+A trajectory is counted as chaotic in window $k$ if $H_{j,k} \ge H_\text{c}$, and as regular otherwise. We use $H_\text{c}=5.0$, close to $\ln M\simeq5.30$: a window is chaotic only if its points fill nearly $M$ distinct cells, whereas periodic orbits of low period, with $H\le\ln p$ for period $pT_a$, are regular. The plotted quantities are the fractions of the ensemble in each class,
+\begin{equation}
+    f_\text{c}(t_k) = \frac{1}{N}\,\#\bigl\{ j : H_{j,k} \ge H_\text{c} \bigr\},
+    \qquad
+    f_\text{r}(t_k) = \frac{1}{N}\,\#\bigl\{ j : H_{j,k} \le H_\text{c} \bigr\},
+\end{equation}
+shown as solid lines against $\kappa_b t_k$.
+
+\paragraph*{Quasi-periodic orbits.}
+The torus born at the Neimark--Sacker bifurcation is a blind spot of both diagnostics. Sampled once per period, a quasi-periodic orbit traces a closed curve, which fills many cells, so the entropy test counts it as chaotic. Its largest Lyapunov exponent is zero, so the sign of a finite-time estimate is not reliable either. In our maps, this concerns a narrow window only: at $\eps_d/2g_2=5.06$, the Neimark--Sacker bifurcation ($76.7~\mathrm{MHz}$) and the first chaotic point of the satellite-start map ($77.6~\mathrm{MHz}$) are less than one grid cell apart. At the parameters of \cref{fig:transient_chaos}, far above the Neimark--Sacker line, the torus no longer exists.
+
+\paragraph*{Confined chaos and boundary crisis.}
+The maps show two regimes above the onset of chaos.
+
+Between the Neimark--Sacker line and $g_2/2\pi\simeq90$--$100~\mathrm{MHz}$, depending on the cat size, the chaos behaves as an attractor on our time scales. The Neimark--Sacker bifurcation is local: the torus, and then the chaotic set, are born from the period-doubled satellite and stay close to it. In the satellite-start map (\cref{fig_lyap_satellite_start}), for $\eps_d/2g_2\ge3.75$, no trajectory ends on a cat below $100~\mathrm{MHz}$, and only isolated grid points do above. In the vacuum-start map, extending the discarded transient from $30$ to $120/\kappa_b$ makes only $3\%$ of the chaotic points between $80$ and $100~\mathrm{MHz}$ regular (\cref{tab:lyap_convergence,fig:transient_lyap_convergence}).
+
+Above $g_2/2\pi\simeq100~\mathrm{MHz}$, the chaos is partly transient. With the longer transient, $13$ to $68\%$ of the chaotic points become regular, depending on $g_2$ (dark blue cells right of the dashed line in \cref{fig:transient_lyap_convergence}a). A longer averaging time has a smaller effect, concentrated in the same region (\cref{fig:transient_lyap_convergence}b). In the satellite-start map, chaotic and regular end states alternate between neighbouring grid points, and these points are also the most sensitive to the solver tolerance. This is the signature of a boundary crisis~\TMD{cite Grebogi, Ott and Yorke 1983}: the growing chaotic attractor touches the boundary of the basin of another attractor and becomes a chaotic saddle, from which trajectories escape after a finite time. For $\eps_d/2g_2\lesssim3.7$, the escaping trajectories end on a cat, which appears in the satellite-start map from $g_2/2\pi\simeq88$--$95~\mathrm{MHz}$. For larger drives, they end mostly on large-amplitude regular orbits ($\langle|b|\rangle>0.8$, classified as satellites).
+
+The parameters of \cref{fig:transient_chaos} ($98.8~\mathrm{MHz}$, $\eps_d/2g_2=2.6$) lie just past the crisis at this cat size, which is why every chaotic trajectory eventually settles on a regular attractor. Past a boundary crisis, the mean lifetime of the transient is expected to decrease as a power law, $\tau\propto(g_2-g_{2,c})^{-\gamma}$. Our data do not test this scaling: the fraction of points that become regular with the longer transient is not monotonic in $g_2$. A direct measurement of $\tau$ against $g_2$ would be needed.
+
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=\columnwidth]{Chaos/figures_article/transient_lyapunov_convergence_13_10_2026.pdf}
+    \caption{Sign of the maximal Lyapunov exponent from the vacuum, compared with the reference map of \cref{fig_classical_onset_of_chaos_heatmap} ($T_\text{tr}=30/\kappa_b$, $T=60/\kappa_b$). (a) Transient extended to $T_\text{tr}=120/\kappa_b$: $737$ points become regular and $59$ chaotic. (b) Averaging time extended to $T=480/\kappa_b$: $193$ points become regular and $6$ chaotic. Black line: Neimark--Sacker instability of the period-doubled satellite. Dashed line: $g_2/2\pi=100~\mathrm{MHz}$. Star: parameters of \cref{fig:transient_chaos}.}
+    \label{fig:transient_lyap_convergence}
+\end{figure}
+
+\TMD{Transient chaos literature, reference for exponential decay, Difficulty for the computation of Lyapunov exponents, work already on quantum transient chaos? Maybe the chaotic chaos is never transient?}
+
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=\columnwidth]{Chaos/figures_article/transient_chaos_12_10_2026.pdf}
+    \caption{Decay of the proportion of chaotic trajectories of the system. The dashed lines are exponential fits.}
+    \label{fig:transient_chaos}
+\end{figure}
+
+
+\bibliography{biblio}
+
+\end{document}

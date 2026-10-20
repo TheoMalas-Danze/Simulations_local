@@ -332,7 +332,7 @@ function equation_parity_cos_sin!(du,u,p::SimulationParams{SystemATS_ladder_prep
     a = u[1]
     b = u[2]
 
-    coupling_a = sin((a+conj(a))/sqrt(2) * sqrt(Z_a)/ϕ_quantum) * sin((b+conj(b))/sqrt(2) * sqrt(Z_b)/ϕ_quantum) / ϕ_quantum
+    coupling_a = sin((a+conj(a))/sqrt(2) * sqrt(Z_a)/ϕ_quantum) * sin((b+conj(b))/sqrt(2) * sqrt(Z_b)/ϕ_quantum) / ϕ_quantum / sqrt(2) # /sqrt(2) as for coupling_b (missing before 12/10/2026)
     coupling_b = (cos((a+conj(a))/sqrt(2) * sqrt(Z_a)/ϕ_quantum) * cos((b+conj(b))/sqrt(2) * sqrt(Z_b)/ϕ_quantum) -1) / ϕ_quantum / sqrt(2)
     sin_pump = 2*E_J*p.drive_prepared.drive_pump(ϵ_0, ω_p, t, pump_phase)
         

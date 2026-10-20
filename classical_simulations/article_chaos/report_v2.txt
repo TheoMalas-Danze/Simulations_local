@@ -1,0 +1,145 @@
+Report v2, on article_chaos_v2.tex (13/10/2026). Line numbers refer to v2.
+Solved since v1:
+* the g₂ definition (sin ε_p only, eq_g2 + Table of parameters);
+* κ_b in the text (GKSL convention, κ_b/2π ≈ 96 MHz, App. "Analytical derivation" fixed) and in Figs. 7 and 18;
+* Fig. 4 (periods, |μ|, bifurcation list, footnote, ε_d/2g₂ = 5.06);
+* the Lyapunov method appendix, the yellow line, the "??" references, the stale J₁ numbers of the satellite-start appendix;
+* the OTOC runs: κ = 2π/10.4 with jump √κ b, i.e. 96 MHz, confirmed by the 25 saved points (n_sub 8 × 3 periods + 1);
+* the reason for starting at the origin (saddle between the cat basins, cat preparation, bit-flip path), and the comparison with the cat start in the main text and in App. "cat lobes" (numbers added);
+* the satellite-start map, moved to the main text (fig_lyap_satellite_start): the onset of chaos follows the Neimark–Sacker line within 1–2 MHz for ε_d/2g₂ ≥ 2;
+* the Josephson relations (I = I_c sin φ, V = Φ₀φ̇), and the choice of φ_d through a DC change of frame (new App. "DC change of frame", φ_d = −2g(φ_a²/ω_a + φ_b²/ω_b));
+* the parity-protected appendix, now with static fluxes (no ω_p, no J₁, η cancels the static force on the buffer, C_c = 3C̄/2 without L_c);
+* Fig. 11: the two elements are now "ATS 1" and "ATS 2", and the caption and the main text say that buffer and memory are their symmetric and antisymmetric modes;
+* the convergence of the Lyapunov map (paragraph in the main text, Table in App. "Lyapunov method", see big error 2);
+* App. "Transient chaos": parameters, entropy threshold, remark on the torus, and a paragraph "Confined chaos and boundary crisis" (checked against the data, see big error 2);
+* App. "Period-doubled satellite limit-cycle": text and caption;
+* "integrable" → "regular", "loose" → "lose";
+* the IPR run (13/10): κ = 2π/10.4 with jump √κ b (96 MHz), T = 2/κ_b ≈ 3.3 ns. App. "IPR" rewritten with the new numbers (stabilized baseline ≥ 0.86, plateau 0.14–0.20 for ε_d/g₂ ≥ 5 from 87–94 MHz, N_eff ≈ 15–20, truncation caveat);
+* the transient regime: convergence of the Lyapunov map (Table + Fig. fig:transient_lyap_convergence), confined chaos up to 90–100 MHz, boundary crisis above. The Limitations paragraph of App. "satellite" now relies on these results instead of an unquoted lifetime;
+* broken pieces: \iffalse block of App. "satellite" deleted, its duplicate paragraph replaced by a pointer to the main text and App. "Transient chaos";
+* point 6 of the previous version ("infinitely many limit cycles" not supported) is withdrawn: my objection only covered the cat family (J₂(2|a₀|) = ε′_d/2β′_b, finite because of the drive level). With the buffer carrying the drive, the general harmonic balance (D3 with D5) reduces at large memory amplitude to Bessel-zero conditions, so infinitely many periodic solutions are plausible. The sentence now says so, and that any finite truncation keeps only finitely many. Not checked numerically.
+
+Solved after v2 (19–20/10/2026, poster_chicago_2026/Hill_method_cat_fold.ipynb; ε_d/2g₂ = 5.06 and κ_b/2π = 96 MHz unless stated):
+* Point 9, does the cat lose stability? No, it disappears.
+    * Along its whole branch, at every ε_d/2g₂ of the map, the cat orbit has |μ| ≤ 0.973: two complex pairs whose product is fixed by Liouville. There is no period doubling and no Neimark–Sacker on the cat.
+    * It ends at a fold (saddle-node of limit cycles) at g₂*/2π = 97.2 MHz. The slow pair meets its own conjugate on the real axis at radius 0.972, and one multiplier then crosses +1, within Δε_p ~ 10⁻⁶ of the fold. This is a Hamiltonian saddle-centre unfolded by the loss, not a Hamiltonian–Hopf collision: the fast (buffer-like) pair never meets the slow pair. The Floquet sweep could not go past ε_p ≈ 0.786 because no cat solution exists beyond it. Pseudo-arclength continuation follows the branch through the fold.
+    * Fold line: g₂*|α|/2π ≈ 219 MHz, i.e. g₂* ∝ 1/|α|, constant to 1% for ε_d/g₂ from 5.25 to 13.5. There is no fold below g₂ max for ε_d/2g₂ ≤ 2.5.
+    * Analytic (App. "Analytical derivation", satellite Ansatz taken on the cat family σ = −1): g₂*|α| = √s* ω_aφ_aφ_b/(2φ_a² + φ_b²), with s* = 1/56 at leading order and s* = (1 + 30ρ/49)/56 with the 3ω_a sideband, ρ = φ_b²/(2φ_a² + φ_b²). This gives 216 MHz (−1.5%). The reduced full-cosine system reproduces the Hill line within 0.1 MHz.
+    * Mechanism: the static junction phase C ∝ ⟨X²⟩ detunes the memory, and the 2ω_a component ȳ must cancel it, but ȳ itself feeds C. The self-consistency 7β_Σȳ² − ȳ + 2β_Σ φ_a²|α|² = 0 loses its real root.
+    * The fold does not depend on κ_b at this order: a factor 4 in κ_b moves it by less than 2 MHz.
+    * Ready-to-paste subsection: article_chaos/cat_fold_appendix_snippet.tex.
+    * Checks: the Hill multipliers agree with a directly integrated monodromy matrix to 10⁻¹², and Liouville holds to 10⁻⁶.
+* Why the cat start is chaotic 5–23 MHz above the vacuum onset: it is a basin effect, not an instability.
+    * The cat-start onset lies 6–9% (5.5–11 MHz) below the fold line, at every ε_d/2g₂, while the cat is still stable.
+    * Its basin shrinks as the fold approaches. From a(0) = i r|α|, b(0) = 0, every r ∈ [0.6, 1.4] lands on a cat at 77.6 MHz, only r ≈ 0.85–0.95 at 89.6 MHz, and none at 90.6 MHz.
+    * The empty buffer is the larger part of the mismatch: a = i|α| with b on the orbit still lands up to 92.7 MHz.
+* Big error 1, how are the satellites born? Through a fold, together with the saddle that destroys the cat.
+    * The saddle born at the cat fold (97.2 MHz) continues down to a second fold at 40.4 MHz, where it turns into the stable satellite. Cat and satellite are the two stable ends of one S-shaped branch; they coexist (hysteresis) on 40.4–97.2 MHz, and the saddle's stable manifold separates their basins.
+    * Along the saddle the memory phase rotates from π/2 (cat) to ≈ π (satellite), so 2θ, the phase seen by the drive, turns by π. At the satellite fold it is 0.74π, close to quadrature.
+    * The satellite fold depends strongly on κ_b: 22.1 / 40.4 / 55.3 MHz for κ_b × 0.5 / 1 / 2, while the cat fold stays at 97.1–97.6 MHz. As in a damped Duffing oscillator, the high-amplitude branch is damping-limited, and for κ_b → 0 the satellite family detaches from the cat. In the analytic harmonic balance the σ = ±1 families connect only through ε_eff = √(ε′_d² − 4κ′_b²y²), i.e. through the damping.
+* What happens to the satellite above the period doubling (ε_d/2g₂ = 5.06):
+    * The period doubling is at 75.3 MHz, as in Hill_method_corrected.
+    * The period-doubled satellite (the orbit of Hill_method_doubling_corrected) is stable only on 75.3–76.75 MHz. It stays unstable up to 128 MHz (max|μ| ≈ 2.7 at 100 MHz), so no time integration lands on it there.
+    * The period-1 satellite becomes stable again at 103.7 MHz (μ back through −1), up to g₂ max = 137 MHz. A trajectory started on it returns to it at 108–135 MHz. Its basin, however, is tiny: kicks of |δa| ≈ 0.01–0.03 already escape, against |a| ≈ 3, and a 41 × 41 grid of starts with |a| ≤ 7 almost never lands on it. Zero-point fluctuations (|δa| ~ 1/2) are far larger, so it is irrelevant for the qubit.
+    * The restabilisation is subcritical: 0.1 MHz below it, a trajectory started on the satellite jumps to a different period-2 orbit dominated by ω_a/2 (memory odd/even harmonics 0.54/0.11). That orbit is stable on about 101.2–106.8 MHz and exists on about 100–119 MHz.
+* Gallery figure of the whole branch (cat, saddle, satellite, period-2 orbits, memory and buffer, 3D against g₂): figures/article/limit_cycles_branch_3d_20_10_2026.pdf.
+* Point 10, rescaling with κ_b: yes, for the Neimark–Sacker instability of the period-2 satellite (poster_chicago_2026/floquet_rescaling_kappa_b.ipynb, 20/10; ε_d = 10.12 g₂, κ_b/2π = 48–384 MHz GKSL).
+    * Quantity: Λ = ln|μ_NS|/T, the Floquet exponent of the complex pair that crosses |μ| = 1 (arg μ ≈ 0.21π for every κ_b), T = 4π/ω_a.
+    * Collapse: Λ/κ_b against x = a(g₂ − g₂*(0⁺))/κ_b². The zero crossings fall at x* = 0.32–0.40 and the curves overlap above them. Reference curve √(x + e) − 1/4, no free parameter.
+    * Conservative limit: the lossless orbit becomes unstable at g₂,₀ = 76.302 MHz (Hamiltonian–Hopf collision), with σ_H² ≈ a(g₂ − g₂,₀), a = 0.210 ns⁻²/MHz.
+    * Surprise: for κ_b → 0 the threshold tends to g₂*(0⁺) = 76.147 MHz, 0.15 MHz below g₂,₀ (converged in N_H), then rises as 1.54 MHz × (κ_b [ns⁻¹])². A vanishing loss destabilises the orbit before the Krein collision (dissipation-induced instability, Ziegler's paradox).
+    * Model: Λ = −κ_b/4 + Re√D, with D = ((λ₁ − λ₂)/2)² from the two exponents with Im λ > 0. This is exact. Liouville fixes the −κ_b/4, and time reversal (κ_b → −κ_b) makes the even-in-κ_b coefficients of D real and the odd ones imaginary.
+      To second order, D = a(g₂ − g₂,₀) + iGκ_b + eκ_b². This gives a(g₂* − g₂,₀) = −4G² + (1/16 − e)κ_b², i.e. the offset and the κ_b² law. G comes from the unequal damping of the two colliding modes, and e = −0.26 sets the offset −e in √(x + e).
+    * Checks: G = 0.096 ns⁻² from the spectrum against 0.090 fitted on the thresholds. The exact κ_b → 0 condition D₀ + 4G² = 0 predicts the offset at −0.1546 MHz, against −0.1545 MHz from the Hill thresholds.
+    * Higher orders in (g₂ − g₂,₀, κ_b) improve the threshold only near the collision (κ_b/2π ≲ 100 MHz, error 3×10⁻² → 2×10⁻³ MHz). They get worse beyond, because the expansion cannot reach past the period doubling (a pair on the real axis), 1.55 MHz below g₂,₀.
+    * The earlier interpretation in kappa_b_threshold_slope.md (threshold at σ_H ≈ κ_b/2) is superseded: the mean damping is κ_b/4 (Liouville), and the extra shift comes from G and e.
+
+1. Big errors
+1. The satellites: how are they born? → Solved 20/10, see "Solved after v2": a fold (+1) at 40.4 MHz, together with the saddle that destroys the cat at 97.2 MHz. This is the second boundary below (fold), not the pitchfork.
+* The Hill section can list the saddle-node (+1) crossing again as the birth of the satellites, now with the numbers.
+* Done 20/10 (poster_chicago_2026/Hill_method_satellite_fold.ipynb; figure figures/article/satellite_fold_line_20_10_2026.pdf; data satellite_fold_line_20_10_2026.json):
+    * Satellite fold line (Hill): from 84.4 MHz at ε_d/g₂ = 2 down to 33.6 MHz at ε_d/g₂ = 13, i.e. g₂*|α| ≈ 84–91 MHz. The cat fold is at g₂*|α| ≈ 219 MHz, 2.4–2.6 times higher at every ratio.
+        * There is no cusp in the (g₂, ε_d/2g₂) plane: the two fold lines never meet, so cat and satellite coexist on a bistable window at every ratio of the map.
+        * The cusp comes from κ_b instead. At ε_d = 10.12 g₂, the satellite fold rises with κ_b and the cat fold only slowly (97.2 → 110.6 MHz). They merge at κ_c = 9.70 κ_b (κ_b/2π ≈ 933 MHz, GKSL), at g₂,c/2π = 110.6 MHz, i.e. g₂,c/κ_c ≈ 0.12.
+            * The gap closes as (κ_c − κ_b)^{3/2} (cusp normal form, fit residual 3·10⁻³).
+            * Beyond κ_c there is no bistability: the cat deforms continuously into the satellite.
+            * The power law κ_b^0.66 holds only near the nominal κ_b; extrapolating it gave ≈ 4κ_b, which is wrong.
+            * Figure: figures/article/cusp_kappa_b_20_10_2026.pdf (section "Targeting the cusp" of Hill_method_satellite_fold).
+    * The analytic existence boundary (satellite_hb, used for the seeds of the satellite-start map) is a fold.
+        * It coincides, within 0.02 MHz, with the fold of the reduced system at quadratic order. That reduced system is the one of App. "Satellites", with θ kept as an unknown so that it crosses cos 2θ = 0.
+        * It is the second boundary, 2κ′_b|y| = ε′_d, not x² → 0. At the Hill fold the memory phase is 0.736–0.743π, within 0.015π of quadrature.
+        * It is 8–15% too low. With the full cosine, the reduced system is 1.6–4.9% low and gives the right phase at the fold.
+    * Closed form at leading order (u = 0, ε_eff = 0, ȳ = 1/7β_Σ): g₂*|α| = φ_a √(κ_b^GKSL ω_a/(14(2φ_a² + φ_b²))), i.e. 71 MHz/|α|, 15–22% low.
+        * It gives the scalings 1/|α| and √κ_b.
+        * The exact exponent in κ_b is 0.66: the satellite fold is at 22.1 / 40.4 / 55.3 MHz for κ_b × 0.5 / 1 / 2. The reduced system gives 0.64 with the full cosine and 0.50 at quadratic order.
+        * Could go in the appendix next to the cat fold. Together they give a bistability window from about 71–90 MHz/|α| (satellite birth) to about 219 MHz/|α| (cat death).
+    * The 12–15 MHz band of the satellite-start map comes from two effects. At ε_d/2g₂ ≈ 5, the map has a seed from 35 MHz, a satellite end state from 50 MHz, and the Hill fold at 40.4 MHz.
+        * 35–40 MHz: the analytic satellite does not exist; the analytic boundary is 15% too low.
+        * 40–50 MHz: the satellite exists and is stable (max|μ| ≤ 0.98), but the analytic seed is 1.1–1.4 away from it (x^λ units) and ends on the cat. The exact orbit plus a kick stays on it. At 60 MHz the seed is 0.54 away and lands on the satellite.
+        * So the lower edge of the satellite region of the map, at about 1.2 × the fold, measures the quality of the analytic seed, not where the satellite exists.
+    * TO DO for v3: re-run lyapunov_heatmap_satellite_start seeded with the exact (Hill) satellite instead of the analytic one (satellite_hb).
+        * Recipe:
+            * Export from Python the HB satellite state at τ = 0, [x_a, x_b, dx_a/dτ, dx_b/dτ] in x^λ units, on the map grid (ε_p 0.2:0.01:1.1 × ε_d/g₂ 2:0.1:13.5). Obtain it by continuation from the 60 MHz satellite at 10.12, as in Hill_method_satellite_fold, and use NaN below the Hill fold line (satellite_fold_line_20_10_2026.json).
+            * In Julia, convert with a = (x_a + i dx_a/dτ)/(√2 φ_a) and b = (x_b + i dx_b/dτ/2)/(√2 φ_b), then system_from_amplitudes(a, b).
+            * Keep the end-state classification. With the exact seed, the satellite region should start at the Hill fold.
+        * Above the period doubling, the trajectory leaves the unstable satellite anyway. Up to 75 MHz the map then shows where the satellite is an attractor, and above it what the satellite turns into.
+        * Then update the caption of fig_lyap_satellite_start: the seed is the exact Hill orbit, and the white region is the absence of the satellite (below its fold).
+* Old analysis, kept for reference. The analytic harmonic balance has two existence boundaries:
+    * x² → 0: the two satellites ±x merge at x = 0, a symmetric (pitchfork-like) bifurcation from an orbit with a₀ = 0;
+    * 2κ′_b|y| = ε′_d: the two roots of sin 2θ merge, a fold (saddle-node).
+2. The mitigation comparisons are made at fixed g₂.
+* What matters for the qubit is κ₂ = 4g₂²/κ_b at a fixed α².
+* Larger κ_b: at your working point the threshold in Fig. 7 is flat. So raising κ_b lowers κ₂ without moving the threshold, which makes things worse at first.
+* Multi-buffer: with N identical buffers, the symmetric combination couples with g_eff/√N in the rotating-wave approximation. The apparent gain may come only from the choice of x-axis.
+* Probably remove the multi-buffer part in v3
+6. Plot of Floquet multiplier: no grid /no hashes/add rectangle for zoom / write |\mu_i| instead of words, legend for mu instead of annotation, beware of color
+7. Don't caption subplots
+8. Floquet multiplier of the parity protected qubit --> Show |\mu| and not the real part only
+9. Does the cat itself ever lose stability? → Solved 20/10, see "Solved after v2": no, it disappears at a fold at 97.2 MHz, and the cat-start onset is a basin effect.
+    To do in v3:
+    * Overlay the fold line on the cat-start map (figures/article/heatmap_lyapunov_cat_start_fold_19_10_2026.pdf).
+    * Add App. "Fold of the cat branch" (cat_fold_appendix_snippet.tex).
+    * In the main text, say that the cat-start boundary is a basin boundary, not an instability.
+    * Possibly add the S-shaped branch figure.
+10. Is there some rescaling possible with kappa_b ? Look at the Floquet multiplier --> maybe we can superimposed the curves? → Solved 20/10, see "Solved after v2": the Floquet exponent of the Neimark–Sacker pair collapses as Λ/κ_b against a(g₂ − g₂*(0⁺))/κ_b².
+    It works curve by curve only: the cat fold does not depend on κ_b (< 2 MHz for a factor 4), and the satellite fold grows differently (22 → 40 → 55 MHz for κ_b × 0.5 → 2).
+    To do in v3:
+    * Replace the Fig. 7 explanation (\TMD{Explanation?}) and the suggested sentence of kappa_b_threshold_slope.md: the parabola starts at g₂*(0⁺) = 76.15 MHz, below the conservative collision, and the loss enters through −κ_b/4 (Liouville) and the cross term iGκ_b.
+    * Possibly add the collapse figure (right panel of the collapse cell) and a short appendix on the two-mode model.
+    * Update kappa_b_threshold_slope.md.
+
+
+2. Smaller errors
+* Phase convention. App. "Analytical derivation" puts the cats at θ = ±π/2 and the satellites on the real axis. Figs. 3, 12 and 13 show the opposite.
+* Figure conventions.
+    * The axes differ between figures: g₂ vs ε_p, ε_d/2g₂ vs ε_d/g₂, and different ranges (Fig. 14 has an empty band at the top).
+    * The meaning of a negative OTOC exponent is never explained, and the OTOC rate has no units.
+* Transient chaos: the Grebogi–Ott–Yorke citation (\TMD) and, if wanted, a direct measurement of the lifetime against g₂ to test the crisis scaling.
+* Check convergence on IPR: na=40, nb=20
+* IPR plateau at n_a = 29 is at the value of a state spread over the whole truncated space (2/(n_a+1) ≈ 0.07), so it is likely set by the truncation (said in the text).
+* Wehrl–IPR correlation not recomputed for the 13/10 run (Wehrl_array_poster_13_10_2026.json not in the repo; \TMD in App. "IPR").
+* Text and references.
+    * Ten \TMD{} notes are open, among them the Benettin/ChaosTools citations (no bib entry here).
+* Symmetry. The rotating-frame equations are invariant under a → −a combined with τ → τ + π. So the full model already has a parity tied to a half-period time shift. Say what the parity-protected design adds (an instantaneous parity). Then check whether period doubling is forbidden by symmetry there or only pushed to larger g₂. --> Add this sentence to the text when introducing the parity-protected qubit
+
+3. Open questions
+For the main text:
+1. What does chaos do to the qubit? Show bit-flip time or leakage against g₂. You already have Floquet–Arnoldi bit-flip data in analysis/slowest_decay_rate/. Without this, "chaos is bad" is never tied to a qubit metric.
+2. Are the satellites a leakage risk? They are stable attractors well below the chaos threshold, which makes them leakage states.
+    * Where they are born is now known: at 40.4 MHz for ε_d/2g₂ = 5.06 (see big error 1). From there to the period doubling at 75.3 MHz, they coexist with the stable cat, separated by the saddle orbit.
+    * Still open: how large their basins are on 40–75 MHz, measured as the fraction of a grid of starts that lands on them, and how that fraction compares with the cat's.
+3. Where are real devices on the map? Mark them, and state g₂/κ_b. With κ_b/2π = 96 MHz, the satellite instability is at g₂/κ_b ≈ 0.78–0.95, and the vacuum-start onset at 0.77–1.2. That is well outside the regime where the buffer can be adiabatically eliminated.
+4. Is the confined chaos a true attractor? Between the Neimark–Sacker line and 90–100 MHz it survives every window tested (up to 120/κ_b of transient and 480/κ_b of averaging), but a finite-time test cannot prove it. Where exactly is the crisis, and how does the lifetime scale beyond it? Is the route period-doubling, then Neimark–Sacker, then torus breakdown? Poincaré sections in the < 1 MHz window above the Neimark–Sacker line would show the torus.
+5. Are the mitigations still better at fixed κ₂ and α²?
+6. Regular windows above the chaos onset.
+    * The satellite-start map at ε_d/2g₂ = 5.05 is regular at about 102–111 MHz and around 120 MHz, inside the chaotic region.
+    * Candidates (Hill_method_cat_fold, 20/10):
+        * the ω_a/2 period-2 orbit, stable on about 101.2–106.8 MHz;
+        * the restabilised period-1 satellite, above 103.7 MHz, whose basin (|δa| ≈ 0.01–0.03) is too small to be hit by the analytic seed.
+    * To do: identify the attractor at each regular point (stroboscopic period) before saying anything in the text. Worth one sentence at most; it is irrelevant for the qubit, because zero-point fluctuations are far larger than these basins.
+For the appendices:
+* A Hill-method appendix. Cover the convergence in the number of harmonics N_H, how the genuine eigenvalues are selected, the Liouville check (∏μ_i = e^{−κ_b T}, in a footnote of the Hill section), and a cross-check against a directly integrated monodromy matrix. All of these are now done in Hill_method_cat_fold: the Hill and monodromy multipliers agree to 10⁻¹² on the stable and unstable branches, and Liouville holds to 10⁻⁶. The same notebook uses the exact one-period AFT (Γ⁺ = (2/N)Γᵀ) and pseudo-arclength continuation, both worth one sentence in that appendix.
+* Quantum simulation details. Give the truncation convergence, how the sine of an operator is computed, the OTOC fit window, the initial state (bare or dressed cat), and the κ_b convention.
+* Robustness checks. Test memory loss κ_a ≠ 0, the drive frequency corrected for the Stark shift (utils/solve_resonance.py exists), the drive phase, and E_J asymmetry for the parity-protected design.
+* Fig. 7 slope (\TMD{Explanation?}). This is my hypothesis, not tested: the satellite existence condition 2κ′_b|y| ≤ ε′_d gives a threshold linear in κ_b. Overlay it on Fig. 7 to check (with κ′_b = κ_b/2ω_b now).
+
