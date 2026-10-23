@@ -42,9 +42,11 @@ class HB(HarmonicBalance):
         self.b_ext[2*self.drive_harmonic*n + 1] = -np.sqrt(2)*eps_d*phi_b/w_b      # cos block of the drive harmonic, mode b
 
     def set_s(self, s, r=None):
-        # eps_d = r g2
+        # eps_d = r g2 (same operation order as the notebooks, so the solutions are bit-identical to theirs)
         r = self.r if r is None else r
-        self.set_drive(s, r*s*G0)
+        self.s, self.B = s, betas(s)
+        self.b_ext = np.zeros(self.dim)
+        self.b_ext[2*self.drive_harmonic*n + 1] = -np.sqrt(2)*r*s*G0*phi_b/w_b
 
     def set_params(self, eps_p, eps_d):
         self.set_drive(np.sin(eps_p), eps_d)

@@ -105,3 +105,34 @@ def test_monodromy_matches_legacy_and_hill():
     lam = hill_exponents(hb, z)
     assert abs(liouville_residual(hb, lam)) < 1e-9
     assert np.allclose(np.sort_complex(np.exp(2*np.pi*lam)), mu_new, rtol=0, atol=1e-7)
+
+
+def test_bit_identical_to_notebooks():
+    # story_A_v1 caches its Julia jobs by a hash of their inputs: the library must give the notebooks' numbers to the last bit
+    from catchaos.hill import odd_mask, pd_null_vector, strobe
+    from catchaos.ats import fourier_seed
+    from catchaos.branches import arclength_g2, describe, extended_g2
+    from catchaos.seeds import satellite_hb, seed_z
+    s = 103.88/g2_max
+    a, b = HB(16, r=10.0), legacy.HB(16)
+    a.set_s(s); b.set_s(s)
+    za = a.solve(seed_z(satellite_hb(s, 10.0), 16))
+    zb = b.solve(legacy.seed_z(legacy.satellite_hb(s), 16))
+    assert np.array_equal(za, zb)
+    assert np.array_equal(monodromy(a, za), legacy.monodromy(b, zb))
+    a2, b2 = HB2(32, r=10.0), legacy.HB2(32)
+    a2.set_s(s); b2.set_s(s)
+    z2a, z2b = a2.newton(embed(za, 16, 32)), legacy.newton(b2, legacy.embed(zb, 16, 32))
+    assert np.array_equal(z2a, z2b)
+    v, _ = pd_null_vector(a2, z2a, odd_mask(32))
+    y0, t0 = np.append(z2a, s*g2_max/100), np.append(v, 0.0)
+    Ha, ea = arclength_g2(a2, y0, t0, 10.0, n_max=25)
+    Hb, eb = legacy.arclength(b2, y0, t0, n_max=25)
+    assert np.array_equal(Ha, Hb) and ea == eb
+    Da, Db = describe(Ha[::8], 32, 10.0), legacy.describe(Hb[::8], 32)
+    assert all(np.array_equal(Da[k], Db[k]) for k in Db)
+    Fa, dFa = extended_g2(a2, 10.0)
+    Fb, dFb = legacy.extended(b2)
+    assert np.array_equal(dFa(Ha[-1]), dFb(Hb[-1]))
+    y = strobe(za, 16)
+    assert np.array_equal(fourier_seed(y, s, 10.0, 32), legacy.fourier_seed(y, s, 32))
