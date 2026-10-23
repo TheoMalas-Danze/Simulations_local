@@ -68,6 +68,16 @@ Every file uses **absolute `include` paths** (`/Users/tmalas/Desktop/Dev/Simulat
   - Other diagnostics: Poincaré / stroboscopic sections at the memory period, FFT Shannon entropy, and IPR.
 - The Python notebooks import `Plot_setting` from `/Users/tmalas/Desktop/Dev/Simulations_local/Code_python`, which is **outside this folder**.
 
+## Python library (`pylib/catchaos/`, 2026-10-23)
+Shared code for the Python notebooks, replacing the copies of the Hill code (`HB`/`HB2`, `orbit`, `monodromy`, `satellite_hb`, arclength, …) in each notebook. **Use it in new notebooks instead of copying cells.**
+Not installed: `sys.path.insert(0, ".../classical_simulations/pylib")`. Notebooks run on Homebrew Python 3.11 (`/opt/homebrew/opt/python@3.11/bin/python3.11`, also used by `jupyter nbconvert`).
+- `params.py`: `w_a, w_b, phi_a, phi_b, E_J, kappa_b` (code, π/10.4), `G0`, `g2_of`, `g2_J1_of`, `MHz`, `g2_max`, `s_of_MHz`.
+- `hill/` (model-independent, any number of modes): `HarmonicBalance(N_H, M, C, K, period)` (exact one-period AFT; subclasses give `fnl`, `dfnl`, `b_ext`; `solve`, `solve_robust`, `newton`, `pad`); `orbit`, `state`, `strobe`, `odd_content`, `odd_mask`, `embed`, `fourier_project`; continuation `natural`, `arclength`, `continue_to_fold`, `branch_on_grid` (= `satellite_column`/`cat_column`), `pd_null_vector`; Floquet `monodromy(_matrix)`, `instability`, `unstable_set`, `transitions`, `hill_exponents`/`hill_multipliers` (genuine exponents, `select_genuine`), `liouville_residual`, `match_eigs`.
+- `ats.py`: `HB(N_H, period=1, kfac, kappa, r)` with `set_s(s, r)`, `set_params(eps_p, eps_d)`, `set_kappa`; `HB2(N_H)` = `HB(N_H, period=2)`; `full_rhs(s, r, kfac)`, `amplitudes`, `state_of_amplitudes`, `rotating_frame`, `section`, `fourier_seed`, `mean_abs_aR`.
+- `seeds.py`: `satellite_hb`, `seed_z`, `satellite(hb, s, r)`, `cat_seed(hb)`, `period2_seed(hb2)` (hard-coded J1 seeds continued to the sin g2).
+- `paths.py` (`DATA`, `FIGS`, `ARTICLE_FIGS`, `dated(name)`, `latest(name)`), `jsonio.py` (`save_json` with NaN → null, `load_json`, `nan2none`), `plotting.py` (`from catchaos.plotting import *` = `Plot_setting`).
+- Tests: `python3.11 pylib/tests/run.py` (fast, against a frozen copy of the notebook code, `tests/legacy.py`) or `run.py all` (+ reproduces saved outputs: bubble edges at ε_d = 10 g2, branch II switching, satellite/cat seed grids, period-2 branch multipliers, Hill multipliers of `floquet_before_period_doubling`; ≈ 5 s). Run them after any change to the library.
+
 ## Folder map
 - **`poster_chicago_2026/`**: the most recent work (Apr–Sep 2026), for a Chicago 2026 poster and an article.
   - `Hill_method.ipynb` and `Hill_method_doubling.ipynb` **[Py]**: harmonic balance and Floquet stability (see below).
