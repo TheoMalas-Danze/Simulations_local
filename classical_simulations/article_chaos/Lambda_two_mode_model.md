@@ -1,7 +1,7 @@
 # Floquet exponent near the Neimark–Sacker point: two-mode model
 
 Written 20/10/2026, for report v2, point 10.
-The numbers come from `classical_simulations/poster_chicago_2026/floquet_rescaling_kappa_b.ipynb`.
+The numbers come from `classical_simulations/studies/hill_orbits/floquet_rescaling_kappa_b.ipynb`.
 
 **Goal.** Derive
 

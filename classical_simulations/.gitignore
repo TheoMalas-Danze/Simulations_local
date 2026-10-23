@@ -1,0 +1,4 @@
+# outputs stay out of git, as analysis/output/ and figures/ (root .gitignore)
+/data/
+/archive/data/
+/archive/figures/

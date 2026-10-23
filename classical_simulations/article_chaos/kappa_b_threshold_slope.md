@@ -2,7 +2,7 @@
 
 Analysis of 19–20/10/2026, answering report v2 ("Fig. 7 slope, \TMD{Explanation?}").
 Code and outputs: cells 43–52 of
-`classical_simulations/poster_chicago_2026/Hill_method_doubling_corrected.ipynb`.
+`classical_simulations/studies/hill_orbits/Hill_method_doubling_corrected.ipynb`.
 
 **Setup.**
 - **Orbit and threshold:** period-2 satellite at ε_d/g₂ = 10.12 (ε_d/2g₂ = 5.06). The threshold g₂* is the smallest g₂ with max |μ| > 1 (Hill's method, N_H = 15).

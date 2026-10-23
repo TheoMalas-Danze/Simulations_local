@@ -24,7 +24,7 @@ def close_sets(a, b, atol):
 
 def test_period2_branches_eps_d10():
     # Hill_period2_branch_II.ipynb: stored HB coefficients solve HB2(32), and give the stored multipliers and types
-    P = load_json(DATA/"period2_branches_eps_d10_23_10_2026.json")
+    P = load_json(DATA/"torus_crisis"/"period2_branches_eps_d10_23_10_2026.json")
     hb2 = HB2(32, r=10.0)
     for name in ("branch_I", "branch_II", "omega_half_node", "omega_half_saddle"):
         B = P[name]
@@ -41,7 +41,7 @@ def test_period2_branches_eps_d10():
 
 def test_bubble_edges_eps_d10():
     # Hill_period2_branch_II.ipynb section 1: period doublings of the satellite at eps_d = 10 g2 (bisection on mu = -1)
-    P = load_json(DATA/"period2_branches_eps_d10_23_10_2026.json")
+    P = load_json(DATA/"torus_crisis"/"period2_branches_eps_d10_23_10_2026.json")
     hb = HB(16, r=10.0)
     z = satellite(hb, 60/g2_max, 10.0)
 
@@ -69,7 +69,7 @@ def test_bubble_edges_eps_d10():
 
 def test_branch_II_switching():
     # Hill_period2_branch_II.ipynb section 2: branch II starts from the odd null vector, a saddle above the upper edge
-    P = load_json(DATA/"period2_branches_eps_d10_23_10_2026.json")
+    P = load_json(DATA/"torus_crisis"/"period2_branches_eps_d10_23_10_2026.json")
     g_pd = P["g2_pd_upper_MHz"]
     hb, hb2 = HB(16, r=10.0), HB2(32, r=10.0)
     z = satellite(hb, 60/g2_max, 10.0)
@@ -102,7 +102,7 @@ def _top_satellite(hb, r, s_top):
 
 
 def test_satellite_seed_grid():
-    G = load_json(DATA/"satellite_seed_hill_22_10_2026.json")
+    G = load_json(DATA/"hill_orbits"/"satellite_seed_hill_22_10_2026.json")
     s_grid = np.sin(np.array(G["eps_p_list"]))
     ratios = G["eps_d_over_g2"]
     hb = HB(16)
@@ -117,7 +117,7 @@ def test_satellite_seed_grid():
 
 
 def test_cat_seed_grid():
-    G = load_json(DATA/"cat_seed_hill_22_10_2026.json")
+    G = load_json(DATA/"hill_orbits"/"cat_seed_hill_22_10_2026.json")
     eps_p = np.array(G["eps_p_list"])
     s_grid = np.sin(eps_p)
     i_half = int(np.argmin(np.abs(eps_p - 0.5)))
@@ -137,7 +137,7 @@ def test_cat_seed_grid():
 
 def test_hill_floquet_before_period_doubling():
     # Hill_method_corrected.ipynb (older AFT over 50 periods + Hill's method): multipliers of the satellite at 10.12
-    F = load_json(DATA/"floquet_before_period_doubling_12_10_2026.json")
+    F = load_json(DATA/"hill_orbits"/"floquet_before_period_doubling_12_10_2026.json")
     hb = HB(16, r=10.12)
     z = satellite(hb, 60/g2_max, 10.12)
     s_now = 60/g2_max
